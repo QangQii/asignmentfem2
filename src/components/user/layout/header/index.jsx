@@ -2,6 +2,7 @@ import "../../../../assets/css/bootstrap.min.css";
 import "../../../../assets/css/tiny-slider.css";
 import "../../../../assets/css/style.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import {Link} from 'react-router'; // đường dẫn click bằng thẻ link=\
 const HeaderClient = () =>{
     return (
         <>
@@ -23,8 +24,8 @@ const HeaderClient = () =>{
                                 <a className="nav-link" href="index.html">Trang chủ</a>
                             </li>
                             <li><a className="nav-link" href="shop.html">Sản phẩm</a></li>
-                            <li><a className="nav-link" href="about.html">Thông tin</a></li>
-                            <li><a className="nav-link" href="services.html">Dịch vụ</a></li>
+                            <li><Link className="nav-link" to={"/about"}>Thông tin</Link></li>
+                            <li><Link className="nav-link" to={"/services"}>Dịch vụ</Link></li>
                             <li><a className="nav-link" href="blog.html">Bài viết</a></li>
                             <li><a className="nav-link" href="contact.html">Liên hệ</a></li>
                         </ul>
