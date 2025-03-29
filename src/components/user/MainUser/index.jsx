@@ -1,5 +1,5 @@
-import HeaderClient from "../../components/user/layout/header/index";
-import FooterClient from "../../components/user/layout/footer/index";
+import HeaderClient from "../layout/header";
+import FooterClient from "../layout/footer";
 import { Outlet } from "react-router";
 
 

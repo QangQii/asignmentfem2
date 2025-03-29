@@ -1,16 +1,12 @@
 import './App.css';
-import {
-  Routes, // có nhiều đường dẫn, chứa nhiều rou
-  Route // chỉ chứa 1 đường dẫn
-} from 'react-router';
+import {Route, Routes} from 'react-router';
 
-import Home from './pages/home';
-import Login from './pages/login';
-import Dashboard from './pages/dashboard';
-import Product from './pages/product';
-import MainUser from './pages/MainUser';
-import MainAdmin from './pages/MainAdmin';
-
+import Home from './pages/client/home';
+import Login from './pages/client/login';
+import Dashboard from './pages/admin/dashboard';
+import Product from './pages/admin/product';
+import MainUser from './components/user/MainUser';
+import MainAdmin from './components/admin/MainAdmin';
 
 
 function App() {
@@ -21,14 +17,16 @@ function App() {
     <Routes>
       <Route path='/' element={<MainUser/>}>
 
-      <Route index element={<Home/>}/>
-      <Route path='login' element={<Login/>}/> {/* Trang con khong có dấu xẹt */}
+          <Route index element={<Home/>}/> {/*đây là trang home trang đầu tiên chỉ cần / ,mặt định nhảy vào home*/}
+          <Route path='login' element={<Login/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
 
       </Route> {/* Trang user */}
 
       <Route path='/admin' element={<MainAdmin/>}>
-        <Route index element={<Dashboard/>}/>
-        <Route path='product' element={<Product/>}/> {/* Trang con khong có dấu xẹt */}
+          <Route index element={<Dashboard/>}/> {/*đây là trang dashboard mặc định của đường dẫn /admin*/}
+
+          <Route path='product' element={
+              <Product/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
       </Route>
 
 

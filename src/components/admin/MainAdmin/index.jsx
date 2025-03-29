@@ -1,5 +1,5 @@
-import HeaderAdmin from "../../components/admin/layout/header";
-import FooterAdmin from "../../components/admin/layout/footer";
+import HeaderAdmin from "../layout/header";
+import FooterAdmin from "../layout/footer";
 import { Outlet } from "react-router";
 
 

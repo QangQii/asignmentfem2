@@ -1,5 +1,5 @@
-import HeaderClient from "../../components/user/layout/header/index";
-import FooterClient from "../../components/user/layout/footer/index";
+import HeaderClient from "../../../components/user/layout/header";
+import FooterClient from "../../../components/user/layout/footer";
 import { Link } from 'react-router'; // đường dẫn click bằng thẻ link
 const Home = () => {
   return ( // return chỉ chạy 1 thẻ div 
