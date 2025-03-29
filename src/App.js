@@ -10,6 +10,8 @@ import MainAdmin from './components/admin/MainAdmin';
 import ProductClient from './pages/client/product';
 import About from "./pages/client/about";
 import Services from "./pages/client/services";
+import Blog from './pages/client/blog';
+import Contact from './pages/client/contact';
 
 
 function App() {
@@ -26,6 +28,8 @@ function App() {
           <Route path='login' element={<Login/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
           <Route path='about' element={<About/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
           <Route path='services' element={<Services/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
+          <Route path='blog' element={<Blog/>}/>
+          <Route path='contact' element={<Contact/>}/>
 
       </Route> {/* Trang user */}
 
