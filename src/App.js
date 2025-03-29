@@ -7,6 +7,7 @@ import Dashboard from './pages/admin/dashboard';
 import Product from './pages/admin/product';
 import MainUser from './components/user/MainUser';
 import MainAdmin from './components/admin/MainAdmin';
+import ProductClient from './pages/client/product';
 import About from "./pages/client/about";
 import Services from "./pages/client/services";
 
@@ -20,6 +21,8 @@ function App() {
       <Route path='/' element={<MainUser/>}>
 
           <Route index element={<Home/>}/> {/*đây là trang home trang đầu tiên chỉ cần / ,mặt định nhảy vào home*/}
+          <Route path='product'
+                 element={<ProductClient/>}/> {/*đây là trang home trang đầu tiên chỉ cần / ,mặt định nhảy vào home*/}
           <Route path='login' element={<Login/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
           <Route path='about' element={<About/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
           <Route path='services' element={<Services/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}

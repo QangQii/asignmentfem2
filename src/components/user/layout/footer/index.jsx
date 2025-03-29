@@ -2,6 +2,7 @@ import "../../../../assets/css/bootstrap.min.css";
 import "../../../../assets/css/tiny-slider.css";
 import "../../../../assets/css/style.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+
 const FooterClient = () =>{
     return(
         <>
@@ -9,7 +10,7 @@ const FooterClient = () =>{
                 <div className="container relative">
 
                     <div className="sofa-img">
-                        <img src="images/sofa.png" alt="Image" className="img-fluid"/>
+                        <img src="images/anhnen.png" alt="Image" className="img-fluid"/>
                     </div>
 
                     <div className="row">
