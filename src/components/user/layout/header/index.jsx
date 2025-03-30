@@ -20,10 +20,10 @@ const HeaderClient = () =>{
 
                     <div className="collapse navbar-collapse" id="navbarsFurni">
                         <ul className="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-                            <li className="nav-item active">
-                                <Link className="btn btn-primary" to={"/"}>Trang Chủ</Link>
+                            <li className="nav-item ">
+                                <Link className="nav-link" to={"/"}>Trang Chủ</Link>
                             </li>
-                            <Link className="btn btn-primary" to={"/product"}>Sản Phẩm</Link>
+                            <Link className="nav-link" to={"/product"}>Sản Phẩm</Link>
                             <li><Link className="nav-link" to={"/about"}>Thông tin</Link></li>
                             <li><Link className="nav-link" to={"/services"}>Dịch vụ</Link></li>
                             <li><Link className="nav-link" to={"/blog"}>Bài viết</Link></li>

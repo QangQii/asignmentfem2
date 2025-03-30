@@ -17,7 +17,7 @@ const Services = () => {
                         </div>
                         <div className="col-lg-7">
                             <div className="hero-img-wrap">
-                                <img src="images/couch.png" className="img-fluid"/>
+                                <img src="images/anhnen.png" className="img-fluid"/>
                             </div>
                         </div>
                     </div>

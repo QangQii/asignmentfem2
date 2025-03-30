@@ -1,0 +1,140 @@
+.footer-admin {
+    text-align: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    color: #333;
+    border-top: 2px solid #ddd;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-admin .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-admin p {
+    margin: 5px 0;
+}
+
+.footer-admin a {
+    color: #3B5D50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-admin a:hover {
+    text-decoration: underline;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.footer-links li {
+    display: inline;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: white;
+    border-bottom: 2px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: calc(100% - 250px);
+    left: 250px;
+    top: 0;
+    z-index: 1000;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #f1f1f1;
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
+.search-box input {
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 6px;
+    width: 180px;
+}
+
+.user-avatar {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-left: 15px;
+    border: 2px solid #ddd;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #3B5D50;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h4, .sidebar h6 {
+    text-align: center;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 18px;
+    margin: 8px 0;
+    background-color: #c5c3c1;
+    color: black;
+    text-decoration: none;
+    border-radius: 50px;
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: #c5c3c1;
+    transform: scale(1.05);
+}
+
+.sidebar a:active {
+    border: 2px solid white;
+}
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    margin-left: 270px;
+    padding: 20px;
+    flex-grow: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}

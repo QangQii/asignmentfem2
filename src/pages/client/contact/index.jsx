@@ -1,5 +1,4 @@
 import React from "react";
-import FooterClient from "../../../components/user/layout/footer";
 
 const Contact = () => {
     return (
@@ -27,7 +26,7 @@ const Contact = () => {
                         </div>
                         <div className="col-lg-7">
                             <div className="hero-img-wrap">
-                                <img src="/images/couch.png" className="img-fluid" alt="Couch"/>
+                                <img src="images/anhnen.png" className="img-fluid" alt="Couch"/>
                             </div>
                         </div>
                     </div>
@@ -83,7 +82,6 @@ const Contact = () => {
                 </div>
             </div>
 
-            <FooterClient/>
         </>
     );
 };
