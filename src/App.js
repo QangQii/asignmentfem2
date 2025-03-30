@@ -15,6 +15,8 @@ import Contact from './pages/client/contact';
 import Order from './pages/admin/order';
 import User from './pages/admin/user/inex';
 
+import Comment from './pages/admin/Comment'
+import EditComment from './pages/admin/Comment/Comment_Edit'
 
 function App() {
 
@@ -38,6 +40,8 @@ function App() {
           <Route index element={<Dashboard/>}/> {/*đây là trang dashboard mặc định của đường dẫn /admin*/}
           <Route path='order' element={<Order/>}/>
           <Route path='user' element={<User/>}/>
+          <Route path='comment' element={<Comment/>}/>
+          <Route path='comment_edit' element={<EditComment/>}/>
           <Route path='product' element={
               <Product/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
       </Route>

@@ -9,7 +9,7 @@ const HeaderAdmin = () => {
 
                 <hr/>
 
-                <a href="#" style={{borderRadius: "50px"}}>
+                <a href="/admin" style={{borderRadius: "50px"}}>
                     <i className="ri-dashboard-line me-2"></i>Bảng điều khiển
                 </a>
                 <hr/>
@@ -28,8 +28,14 @@ const HeaderAdmin = () => {
                     <i className="ri-chat-3-line me-2"></i>Khach Hang
                 </Link>
                 <a href="#" style={{borderRadius: "50px"}}>
-                    <i className="ri-chat-3-line me-2"></i>Bình luận
+                    <i className="ri-file-list-line me-2"></i>Đơn hàng
                 </a>
+                <a href="#" style={{borderRadius: "50px"}}>
+                    <i className="ri-user-line me-2"></i>Khách hàng
+                </a>
+                <Link to="/admin/comment" style={{borderRadius: "50px"}}>
+                    <i className="ri-chat-3-line me-2"></i>Bình luận
+                </Link>
             </div>
 
             <div className="flex-grow-1">
