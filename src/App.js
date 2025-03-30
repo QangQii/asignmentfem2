@@ -14,6 +14,11 @@ import Blog from './pages/client/blog';
 import Contact from './pages/client/contact';
 import Order from './pages/admin/order';
 import User from './pages/admin/user/inex';
+import Addproduct from "./pages/admin/addproduct";
+import EditProduct from "./pages/admin/editproduct";
+import CategoryList from "./pages/admin/category";
+import Addcategory from "./pages/admin/addcategory";
+import Editcategory from "./pages/admin/editcategory";
 
 import Comment from './pages/admin/Comment'
 import EditComment from './pages/admin/Comment/Comment_Edit'
@@ -44,6 +49,19 @@ function App() {
           <Route path='comment_edit' element={<EditComment/>}/>
           <Route path='product' element={
               <Product/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
+          <Route path='product/addproduct' element={
+              <Addproduct/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
+          <Route path='product/editproduct' element={
+              <EditProduct/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
+
+          <Route path='category' element={
+              <CategoryList/>}/>
+
+          <Route path='category/addcategory' element={
+              <Addcategory/>}/>
+
+          <Route path='category/editcategory' element={
+              <Editcategory/>}/>
       </Route>
 
 

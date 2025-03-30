@@ -14,25 +14,21 @@ const HeaderAdmin = () => {
                 </a>
                 <hr/>
 
-                <a href="#" style={{borderRadius: "50px"}}>
-                    <i className="ri-book-2-line me-2"></i>Sản phẩm
-                </a>
 
-                <a href="#" style={{borderRadius: "50px"}}>
-                    <i className="ri-apps-line me-2"></i>Danh mục
-                </a>
+                <Link to="/admin/product" style={{borderRadius: "50px"}}>
+                    <i className="ri-chat-3-line me-2"></i>Sản Phẩm
+                </Link>
+                <Link to="/admin/category" style={{borderRadius: "50px"}}>
+                    <i className="ri-chat-3-line me-2"></i>Danh Mục
+                </Link>
+
                 <Link to="/admin/order" style={{borderRadius: "50px"}}>
                     <i className="ri-chat-3-line me-2"></i>Don hang
                 </Link>
                 <Link to="/admin/user" style={{borderRadius: "50px"}}>
                     <i className="ri-chat-3-line me-2"></i>Khach Hang
                 </Link>
-                <a href="#" style={{borderRadius: "50px"}}>
-                    <i className="ri-file-list-line me-2"></i>Đơn hàng
-                </a>
-                <a href="#" style={{borderRadius: "50px"}}>
-                    <i className="ri-user-line me-2"></i>Khách hàng
-                </a>
+
                 <Link to="/admin/comment" style={{borderRadius: "50px"}}>
                     <i className="ri-chat-3-line me-2"></i>Bình luận
                 </Link>

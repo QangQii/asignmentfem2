@@ -84,7 +84,7 @@ const About = () => {
                         <div className="col-lg-5">
                             <div className="img-wrap">
                                 <img
-                                    src="https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-37ec-51f7-ac8e-ca383d421f10/raw?se=2025-03-29T19%3A45%3A40Z&sp=r&sv=2024-08-04&sr=b&scid=b5db0d18-5e3b-54bb-901a-c915cd760e5b&skoid=7c382de0-129f-486b-9922-6e4a89c6eb7d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-03-29T18%3A11%3A25Z&ske=2025-03-30T18%3A11%3A25Z&sks=b&skv=2024-08-04&sig=QE8wpIWkmSaldsC42nBVx2Nx6sutU7u7DGMLFocVOfw%3D"
+                                    src="images/banner2.jpg"
                                     alt="Tại Sao Chọn Chúng Tôi" className="img-fluid"/>
                             </div>
                         </div>
