@@ -5,7 +5,8 @@ const HeaderAdmin = () => {
     return (
         <>
             <div className="sidebar d-flex flex-column p-3">
-                <h4 className="text-center">Book Man</h4>
+                <img src="images/logo.png" className="img-fluid" alt="Sách"/>
+
                 <hr/>
 
                 <a href="#" style={{borderRadius: "50px"}}>
