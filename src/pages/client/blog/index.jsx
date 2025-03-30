@@ -1,7 +1,13 @@
 import {useEffect, useState} from "react";
-import FooterClient from "../../../components/user/layout/footer";
 
 const Blog = () => {
+    const banner = {
+        image: "/images/boruto.jpg",
+        title: "Chào Mừng Đến Với Trang Blog",
+        description: "Khám Phá Tin Tức Mới Nhất Nhanh Chóng Với BookMen",
+        link: "#"
+    };
+
     const blogPosts = [
         {
             id: 1,
@@ -9,47 +15,35 @@ const Blog = () => {
             author: "Tralalelo Tralala",
             date: "Dec 19, 2021",
             content: "Đón đọc và mua ngay tại BookMen nhé!",
-            images: [
-                "/images/op.jpg",
-                "/images/unded.jpg",
-                "/images/ryu.jpg"
-            ]
+            images: ["/images/op.jpg", "/images/unded.jpg", "/images/ryu.jpg"]
         },
         {
             id: 2,
-            title: "How To Keep Your Furniture Clean",
+            title: "Top Nhân Vật Tuần",
             author: "Bombardilo Crocodilo",
-            date: "Dec 15, 2021",
-            content: "Keeping your furniture clean enhances durability and aesthetics. Here are some useful tips!",
-            images: [
-                "/images/post-2a.jpg",
-                "/images/post-2b.jpg",
-                "/images/post-2c.jpg"
-            ]
+            date: "Dec 15, 2025",
+            content: "Khám Phá Ngay Các Nhân Vật Hot Nhất Tuần!",
+            images: ["/images/jojo.jpg", "/images/ruka1.jpg", "/images/joline.png"]
         },
         {
             id: 3,
-            title: "Small Space Furniture Apartment Ideas",
+            title: "Manga Bán Chạy Nhất Tuần!",
             author: "Tung Tung Tung Sahur",
-            date: "Dec 12, 2021",
-            content: "Maximize your small space with these furniture arrangement tips!",
-            images: [
-                "/images/post-3a.jpg",
-                "/images/post-3b.jpg",
-                "/images/post-3c.jpg"
-            ]
+            date: "Dec 12, 2025",
+            content: "Khám Phá Các Bộ Manga Được Mua Nhiều Nhất!",
+            images: ["/images/kanori.jpg", "/images/kanori2.jpg", "/images/kanori3.jpg"]
         },
         {
             id: 4,
-            title: "Decor Tips for a Cozy Home",
+            title: "Tin Tức Manga Anime Mới Nhất",
             author: "Chí Thành",
-            date: "Dec 10, 2021",
-            content: "A cozy home is all about the right decor choices. Let’s explore the best ideas!",
-            images: [
-                "/images/post-4a.jpg",
-                "/images/post-4b.jpg",
-                "/images/post-4c.jpg"
-            ]
+            date: "Dec 10, 2025",
+            content: [
+                "Boruto Đạt Doanh Thu Khủng!",
+                "Evangelion Chính Thức Qua Chương Mới!",
+                "Thanh Gươm Diệt Quỷ Xô Đổ Hàng Loạt Kỷ Lục?"
+            ],
+            images: ["/images/boruto.jpg", "/images/eva.jpg", "/images/kimetsu.jpg"]
         }
     ];
 
@@ -63,14 +57,29 @@ const Blog = () => {
                     newIndexes[i] = (newIndexes[i] + 1) % blogPosts[i].images.length;
                     return newIndexes;
                 });
-            }, 3000)
+            }, 5000)
         );
-
         return () => intervals.forEach(clearInterval);
     }, []);
 
     return (
         <>
+            {/* Banner Section */}
+            <div className="banner-section mb-3">
+                <div className="container">
+                    <div className="row align-items-center">
+                        <div className="col-md-6">
+                            <img src={banner.image} alt="Banner" className="img-fluid rounded"/>
+                        </div>
+                        <div className="col-md-6">
+                            <h1>{banner.title}</h1>
+                            <p>{banner.description}</p>
+                            <a href={banner.link} className="btn btn-primary">See more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="blog-section">
                 <div className="container">
                     <h2 className="text-center mb-4">Bài viết mới nhất</h2>
@@ -79,11 +88,14 @@ const Blog = () => {
                             <div className="col-md-6 mb-4" key={post.id}>
                                 <div className="blog-slider">
                                     <div className="slides">
-                                        <img src={post.images[indexes[i]]} alt={post.title} className="img-fluid"/>
+                                        <img src={post.images[indexes[i]]} alt={post.title}
+                                             className={post.id === 3 ? "top-cropped-image" : "img-fluid"}/>
                                     </div>
                                     <div className="post-content-entry">
                                         <h3><a href="#">{post.title}</a></h3>
-                                        <p>{post.content}</p>
+                                        <p>
+                                            {post.id === 4 ? post.content[indexes[i]] : post.content}
+                                        </p>
                                         <div className="meta">
                                             <span>by <a href="#">{post.author}</a></span>
                                             <span>on <a href="#">{post.date}</a></span>
@@ -95,9 +107,16 @@ const Blog = () => {
                     </div>
                 </div>
             </div>
-            <FooterClient/>
-
             <style jsx>{`
+                .banner-section {
+                    padding: 30px 0;
+                    background: #f8f9fa;
+                    border-radius: 10px;
+                }
+
+                .blog-section {
+                    margin-top: 5px;
+                }
                 .blog-slider {
                     width: 100%;
                     position: relative;
@@ -109,16 +128,32 @@ const Blog = () => {
                     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 }
 
+                .slides {
+                    width: 100%;
+                    height: 350px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    border-radius: 10px;
+                }
                 .slides img {
                     width: 100%;
+                    height: 100%;
+                    object-fit: cover;
                     border-radius: 10px;
                     transition: opacity 0.5s ease-in-out;
                 }
 
+                .top-cropped-image {
+                    width: auto;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: top;
+                }
                 .post-content-entry {
                     margin-top: 10px;
                 }
-
                 .meta {
                     font-size: 14px;
                     color: #888;

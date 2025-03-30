@@ -12,13 +12,14 @@ import About from "./pages/client/about";
 import Services from "./pages/client/services";
 import Blog from './pages/client/blog';
 import Contact from './pages/client/contact';
+import Order from './pages/admin/order';
+import User from './pages/admin/user/inex';
 
 
 function App() {
 
 
-
-  return ( 
+    return (
     <Routes>
       <Route path='/' element={<MainUser/>}>
 
@@ -35,7 +36,8 @@ function App() {
 
       <Route path='/admin' element={<MainAdmin/>}>
           <Route index element={<Dashboard/>}/> {/*đây là trang dashboard mặc định của đường dẫn /admin*/}
-
+          <Route path='order' element={<Order/>}/>
+          <Route path='user' element={<User/>}/>
           <Route path='product' element={
               <Product/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
       </Route>

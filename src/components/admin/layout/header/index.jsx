@@ -1,4 +1,5 @@
 import "../../../../assets/admin/css/styleadmin.css";
+import {Link} from 'react-router';
 
 const HeaderAdmin = () => {
     return (
@@ -19,12 +20,12 @@ const HeaderAdmin = () => {
                 <a href="#" style={{borderRadius: "50px"}}>
                     <i className="ri-apps-line me-2"></i>Danh mục
                 </a>
-                <a href="#" style={{borderRadius: "50px"}}>
-                    <i className="ri-file-list-line me-2"></i>Đơn hàng
-                </a>
-                <a href="#" style={{borderRadius: "50px"}}>
-                    <i className="ri-user-line me-2"></i>Khách hàng
-                </a>
+                <Link to="/admin/order" style={{borderRadius: "50px"}}>
+                    <i className="ri-chat-3-line me-2"></i>Don hang
+                </Link>
+                <Link to="/admin/user" style={{borderRadius: "50px"}}>
+                    <i className="ri-chat-3-line me-2"></i>Khach Hang
+                </Link>
                 <a href="#" style={{borderRadius: "50px"}}>
                     <i className="ri-chat-3-line me-2"></i>Bình luận
                 </a>
