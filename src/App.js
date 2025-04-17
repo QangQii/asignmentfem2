@@ -30,29 +30,29 @@ function App() {
     <Routes>
       <Route path='/' element={<MainUser/>}>
 
-          <Route index element={<Home/>}/> {/*đây là trang home trang đầu tiên chỉ cần / ,mặt định nhảy vào home*/}
+          <Route index element={<Home/>}/>
           <Route path='product'
-                 element={<ProductClient/>}/> {/*đây là trang home trang đầu tiên chỉ cần / ,mặt định nhảy vào home*/}
-          <Route path='login' element={<Login/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
-          <Route path='about' element={<About/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
-          <Route path='services' element={<Services/>}/> {/* Trang con khong có dấu xẹt , muốn tìm chạy đêns /login */}
+                 element={<ProductClient/>}/> 
+          <Route path='login' element={<Login/>}/> 
+          <Route path='about' element={<About/>}/> 
+          <Route path='services' element={<Services/>}/> 
           <Route path='blog' element={<Blog/>}/>
           <Route path='contact' element={<Contact/>}/>
 
       </Route> {/* Trang user */}
 
       <Route path='/admin' element={<MainAdmin/>}>
-          <Route index element={<Dashboard/>}/> {/*đây là trang dashboard mặc định của đường dẫn /admin*/}
+          <Route index element={<Dashboard/>}/>
           <Route path='order' element={<Order/>}/>
           <Route path='user' element={<User/>}/>
           <Route path='comment' element={<Comment/>}/>
           <Route path='comment_edit' element={<EditComment/>}/>
           <Route path='product' element={
-              <Product/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
+              <Product/>}/> 
           <Route path='product/addproduct' element={
-              <Addproduct/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
-          <Route path='product/editproduct' element={
-              <EditProduct/>}/> {/* đây là trang product muốn chạy phải /admin/product Trang con khong có dấu xẹt */}
+              <Addproduct/>}/> 
+          <Route path='product/editproduct/:id' element={
+              <EditProduct/>}/>
 
           <Route path='category' element={
               <CategoryList/>}/>
@@ -65,13 +65,6 @@ function App() {
       </Route>
 
 
-
-
-
-      {/* <Route path="/" element={<Home />} />
-      <Route path="/product" element={<Product />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/login" element={<Login />} /> */}
     </Routes>
   );
 }
