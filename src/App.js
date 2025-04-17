@@ -60,8 +60,7 @@ function App() {
           <Route path='category/addcategory' element={
               <Addcategory/>}/>
 
-          <Route path='category/editcategory' element={
-              <Editcategory/>}/>
+          <Route path='category/editcategory/:id' element={<Editcategory/>}/>
       </Route>
 
 
