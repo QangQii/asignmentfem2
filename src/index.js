@@ -4,8 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css"; // import boottrap
 import './index.css';
 import App from './App'
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router';
-import { CookiesProvider } from "react-cookie";
+import {BrowserRouter} from 'react-router';
+import {CookiesProvider} from "react-cookie";
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

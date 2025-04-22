@@ -19,9 +19,12 @@ import EditProduct from "./pages/admin/editproduct";
 import CategoryList from "./pages/admin/category";
 import Addcategory from "./pages/admin/addcategory";
 import Editcategory from "./pages/admin/editcategory";
-
+import Register from './pages/client/register';
 import Comment from './pages/admin/Comment'
 import EditComment from './pages/admin/Comment/Comment_Edit'
+import CartPage from './pages/client/cart/CartPage';
+import ProductDetail from './pages/client/productdetail/index.jsx';
+import Profile from './pages/client/profile/index.jsx';
 
 function App() {
 
@@ -32,13 +35,16 @@ function App() {
 
           <Route index element={<Home/>}/>
           <Route path='product'
-                 element={<ProductClient/>}/> 
+                 element={<ProductClient/>}/>
+          <Route path="/product/:id" element={<ProductDetail/>}/>
           <Route path='login' element={<Login/>}/> 
           <Route path='about' element={<About/>}/> 
           <Route path='services' element={<Services/>}/> 
           <Route path='blog' element={<Blog/>}/>
           <Route path='contact' element={<Contact/>}/>
-
+          <Route path='cartpage' element={<CartPage/>}/>
+          <Route path='register' element={<Register/>}/>
+          <Route path='profile' element={<Profile/>}/>
       </Route> {/* Trang user */}
 
       <Route path='/admin' element={<MainAdmin/>}>

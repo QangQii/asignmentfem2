@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
+import React, {useEffect, useState} from "react";
+import {Link, useNavigate, useParams} from "react-router-dom"; // Sử dụng react-router-dom thay vì react-router
 import Constanst from "../../../Constanst"; // Đảm bảo rằng bạn đã cấu hình đúng URL API
-import { Link } from "react-router"; // Chỉnh lại từ react-router thành react-router-dom
 
 const EditProduct = () => {
   const navigate = useNavigate();
@@ -14,8 +13,9 @@ const EditProduct = () => {
     view: "",
     status: "Còn hàng",
     category_id: "",
-    image: "",
+      images: "", // Thay 'image' thành 'images'
   });
+    const [image, setImage] = useState(null); // Dùng state để lưu ảnh khi upload
 
   // Lấy dữ liệu sản phẩm khi component được render
   useEffect(() => {
@@ -33,7 +33,7 @@ const EditProduct = () => {
             view: data.view || "",
             status: data.status === 1 ? "Còn hàng" : "Hết hàng",
             category_id: data.category_id || "",
-            image: data.image || "",
+              images: data.images || "", // Đảm bảo lấy đúng trường 'images' từ server
           });
         } else {
           alert("Không tìm thấy sản phẩm!");
@@ -53,40 +53,52 @@ const EditProduct = () => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
+    const handleImageChange = (e) => {
+        setImage(e.target.files[0]); // Lưu ảnh khi người dùng chọn
+    };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const status = product.status === "Còn hàng" ? 1 : 0;
-  
-    const updatedProduct = { ...product, status };
-  
-    try {
-      const res = await fetch(`${Constanst.DOMAIN_API}/api/products/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedProduct),
-      });
-  
-      if (!res.ok) {
-        const errorData = await res.json();
-        alert(`Lỗi từ server: ${errorData.message || "Không xác định"}`);
-        throw new Error(errorData.message || "Lỗi khi sửa sản phẩm");
+
+      const formData = new FormData();
+      formData.append('name', product.name);
+      formData.append('description', product.description);
+      formData.append('price', product.price);
+      formData.append('discount_price', product.discount_price);
+      formData.append('view', product.view);
+      formData.append('status', product.status === "Còn hàng" ? 1 : 0);
+      formData.append('category_id', product.category_id);
+
+      // Thêm ảnh vào FormData nếu có
+      if (image) {
+          formData.append('images', image);  // Tên trường phải là 'images' như đã cấu hình trong backend
       }
-  
-      alert("Cập nhật sản phẩm thành công!");
-      navigate("/admin/product");
+
+    try {
+        const res = await fetch(`${Constanst.DOMAIN_API}/api/products/${id}`, {
+            method: "PUT",
+            body: formData,  // Gửi FormData thay vì JSON
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            alert(`Lỗi từ server: ${errorData.message || "Không xác định"}`);
+            throw new Error(errorData.message || "Lỗi khi sửa sản phẩm");
+        }
+
+        alert("Cập nhật sản phẩm thành công!");
+        navigate("/admin/product");
     } catch (err) {
-      console.error("Lỗi khi sửa sản phẩm:", err.message);
-      alert(`Lỗi khi sửa sản phẩm: ${err.message}`);
+        console.error("Lỗi khi sửa sản phẩm:", err.message);
+        alert(`Lỗi khi sửa sản phẩm: ${err.message}`);
     }
   };
 
-  return (
+
+    return (
     <div className="container mt-5">
       <h2>Sửa sản phẩm</h2>
-      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light">
+        <form onSubmit={handleSubmit} className="border p-4 rounded bg-light" encType="multipart/form-data">
         <div className="mb-3">
           <label className="form-label">Tên sản phẩm</label>
           <input
@@ -163,15 +175,23 @@ const EditProduct = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Hình ảnh (URL)</label>
+            <label className="form-label">Hình ảnh</label>
           <input
-            type="text"
+              type="file"
             className="form-control"
-            name="image"
-            value={product.image}
-            onChange={handleChange}
-            required
+              name="images"
+              onChange={handleImageChange}
           />
+            {product.images && (
+                <div>
+                    <p>Ảnh hiện tại:</p>
+                    <img
+                        src={`${Constanst.DOMAIN_API}/uploads/${product.images}`}
+                        alt="current product"
+                        width="100"
+                    />
+                </div>
+            )}
         </div>
         <button type="submit" className="btn btn-success me-2">
           Cập nhật sản phẩm

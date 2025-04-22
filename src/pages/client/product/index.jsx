@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
+import {Link} from "react-router";
 import Constanst from "../../../Constanst"; // Đảm bảo Constanst.DOMAIN_API chứa URL đúng của API của bạn
 
 const ProductClient = () => {
@@ -43,11 +44,11 @@ const ProductClient = () => {
                                 <p>Không có sản phẩm nào</p>
                             </div>
                         ) : (
-                            products.map((product, index) => (
+                            products.map((product) => (
                                 <div className="col-12 col-md-4 col-lg-3 mb-5" key={product.id}>
-                                    <a className="product-item" href="#">
+                                    <Link className="product-item" to={`/product/${product.id}`}>
                                         <img
-                                            src={`${Constanst.DOMAIN_API}/${product.images}`} // Đảm bảo đường dẫn hình ảnh chính xác
+                                            src={`${Constanst.DOMAIN_API}/uploads/${product.images}`}
                                             className="img-fluid product-thumbnail"
                                             alt={product.name}
                                         />
@@ -57,10 +58,7 @@ const ProductClient = () => {
                                                 ? product.price.toLocaleString() + " VNĐ"
                                                 : "Giá chưa có"}
                                         </strong>
-                                        <span className="icon-cross">
-                                            <img src="images/cross.svg" className="img-fluid" alt="Thêm vào giỏ" />
-                                        </span>
-                                    </a>
+                                    </Link>
                                 </div>
                             ))
                         )}

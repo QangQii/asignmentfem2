@@ -23,10 +23,11 @@ const HeaderAdmin = () => {
                 </Link>
 
                 <Link to="/admin/order" style={{borderRadius: "50px"}}>
-                    <i className="ri-chat-3-line me-2"></i>Don hang
+                    <i className="ri-chat-3-line me-2"></i>Đơn hàng
                 </Link>
+
                 <Link to="/admin/user" style={{borderRadius: "50px"}}>
-                    <i className="ri-chat-3-line me-2"></i>Khach Hang
+                    <i className="ri-chat-3-line me-2"></i>Khách hàng
                 </Link>
 
                 <Link to="/admin/comment" style={{borderRadius: "50px"}}>

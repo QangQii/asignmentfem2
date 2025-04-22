@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import React, {useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
 import Constanst from "../../../Constanst";
 
 const AddProduct = () => {
@@ -12,27 +12,41 @@ const AddProduct = () => {
     view: "",
     status: "Còn hàng",
     category_id: "",
-    image: "",
+      images: null, // Để lưu trữ file ảnh
   });
 
+    // Xử lý thay đổi giá trị của các trường nhập liệu
   const handleChange = (e) => {
-    setProduct({ ...product, [e.target.name]: e.target.value });
+      const {name, value} = e.target;
+      setProduct({...product, [name]: value});
   };
 
+    // Xử lý thay đổi file hình ảnh
+    const handleFileChange = (e) => {
+        setProduct({...product, images: e.target.files[0]}); // Lưu file ảnh
+  };
+
+    // Gửi dữ liệu đến API
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const status = product.status === "Còn hàng" ? 1 : 0;
+      const formData = new FormData();
 
-    const newProduct = { ...product, status };
+      // Thêm các dữ liệu vào formData
+      formData.append("name", product.name);
+      formData.append("description", product.description);
+      formData.append("price", product.price);
+      formData.append("discount_price", product.discount_price);
+      formData.append("view", product.view);
+      formData.append("status", status);
+      formData.append("category_id", product.category_id);
+      formData.append("images", product.images); // Thêm file ảnh vào FormData
 
     try {
       const res = await fetch(`${Constanst.DOMAIN_API}/api/products/add`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newProduct),
+          body: formData, // Gửi formData thay vì JSON
       });
 
       if (!res.ok) {
@@ -51,7 +65,7 @@ const AddProduct = () => {
   return (
     <div className="container mt-5">
       <h2>Thêm sản phẩm</h2>
-      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light">
+        <form onSubmit={handleSubmit} className="border p-4 rounded bg-light" encType="multipart/form-data">
         <div className="mb-3">
           <label className="form-label">Tên sản phẩm</label>
           <input
@@ -128,13 +142,12 @@ const AddProduct = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Hình ảnh (URL)</label>
+            <label className="form-label">Chọn hình ảnh</label>
           <input
-            type="text"
+              type="file"
             className="form-control"
-            name="image"
-            value={product.image}
-            onChange={handleChange}
+              name="images"
+              onChange={handleFileChange}
             required
           />
         </div>
