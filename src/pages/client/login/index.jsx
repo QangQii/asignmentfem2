@@ -1,8 +1,8 @@
-import React, {useState} from 'react'; // Thêm useContext nếu dùng Context API
+import React, { useState } from 'react';
 import axios from 'axios';
-import {useNavigate} from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
-import Constanst from "../../../Constanst";
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import Constanst from "../../../Constanst"; // Đảm bảo Constanst.DOMAIN_API chứa URL đúng của API của bạn
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -10,7 +10,6 @@ const Login = () => {
     const [error, setError] = useState(null); // State để lưu trữ thông báo lỗi
     const [isLoading, setIsLoading] = useState(false); // State cho trạng thái loading
     const navigate = useNavigate();
-    // const { setIsLoggedIn, setUserInfo } = useContext(AuthContext); // Lấy hàm cập nhật từ Context (tùy chọn)
 
     const handleLogin = async (e) => {
         e.preventDefault(); // Ngăn chặn hành vi submit mặc định của form
@@ -28,11 +27,11 @@ const Login = () => {
             // Gọi API đăng nhập từ backend
             const response = await axios.post(
                 `${Constanst.DOMAIN_API}/api/login`, // **Quan trọng**: Đảm bảo đây là đúng endpoint login của bạn
-                {email, password}, // Dữ liệu gửi đi là JSON
+                { email, password }, // Dữ liệu gửi đi là JSON
                 {
                     headers: {
-                        'Content-Type': 'application/json' // Đảm bảo header đúng
-                    }
+                        'Content-Type': 'application/json', // Đảm bảo header đúng
+                    },
                 }
             );
 
@@ -42,13 +41,19 @@ const Login = () => {
             if (response.data && response.data.token) {
                 const token = response.data.token;
 
+                // Lưu token vào localStorage
                 localStorage.setItem('authToken', token);
                 console.log("Token đã được lưu vào localStorage.");
 
+                // Giải mã token
                 const decodedToken = jwtDecode(token);
                 console.log("Decoded Token:", decodedToken); // Sẽ thấy { id, name, email, role, iat, exp }
 
-                // 4. Điều hướng dựa trên role
+                // Lưu thông tin người dùng vào sessionStorage nếu cần (tuỳ chọn)
+                sessionStorage.setItem('userId', decodedToken.id);
+                sessionStorage.setItem('userRole', decodedToken.role);
+
+                // Điều hướng dựa trên role
                 if (decodedToken.role === 1) { // Role 1: Admin
                     console.log("Redirecting to /admin...");
                     navigate('/admin'); // Điều hướng đến trang dashboard admin
@@ -61,27 +66,23 @@ const Login = () => {
                     navigate('/'); // Mặc định về trang chủ
                 }
 
-                window.location.reload();
-
+                window.location.reload(); // Reload lại trang sau khi đăng nhập thành công
             } else {
                 // Trường hợp API trả về 200 nhưng không có token (ít xảy ra với logic backend hiện tại)
                 setError(response.data.message || "Đăng nhập thành công nhưng không nhận được token.");
             }
 
-
         } catch (err) {
             console.error("Login Error:", err);
-            // Hiển thị lỗi cho người dùng
             if (err.response && err.response.data && err.response.data.message) {
                 setError(err.response.data.message);
             } else if (err.request) {
                 setError("Không thể kết nối đến máy chủ. Vui lòng thử lại.");
             } else {
-                // Lỗi khác
                 setError("Đã có lỗi xảy ra trong quá trình đăng nhập.");
             }
         } finally {
-            setIsLoading(false); // Kết thúc loading dù thành công hay thất bại
+            setIsLoading(false);
         }
     };
 
@@ -93,7 +94,6 @@ const Login = () => {
                         <div className="card p-4 shadow-lg border-0 rounded-3">
                             <h3 className="mb-4 text-center fw-bold">Đăng nhập</h3>
                             <form onSubmit={handleLogin}>
-                                {/* Hiển thị lỗi nếu có */}
                                 {error && (
                                     <div className="alert alert-danger" role="alert">
                                         {error}
@@ -110,8 +110,8 @@ const Login = () => {
                                         placeholder="Nhập địa chỉ email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        required // HTML5 validation
-                                        disabled={isLoading} // Disable khi đang loading
+                                        required 
+                                        disabled={isLoading} 
                                     />
                                 </div>
 
@@ -125,8 +125,8 @@ const Login = () => {
                                         placeholder="Nhập mật khẩu"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        required // HTML5 validation
-                                        disabled={isLoading} // Disable khi đang loading
+                                        required
+                                        disabled={isLoading}
                                     />
                                 </div>
 

@@ -22,10 +22,10 @@ import Editcategory from "./pages/admin/editcategory";
 import Register from './pages/client/register';
 import Comment from './pages/admin/Comment'
 import EditComment from './pages/admin/Comment/Comment_Edit'
+import ProductDetail from './pages/client/productdetail';
 import CartPage from './pages/client/cart/CartPage';
-import ProductDetail from './pages/client/productdetail/index.jsx';
-import Profile from './pages/client/profile/index.jsx';
-
+import Profile from './pages/client/profile';
+import OrderPage from './pages/client/Oder/OrderPage';
 function App() {
 
 
@@ -45,6 +45,7 @@ function App() {
           <Route path='cartpage' element={<CartPage/>}/>
           <Route path='register' element={<Register/>}/>
           <Route path='profile' element={<Profile/>}/>
+          <Route path='oder' element={<OrderPage/>}/>
       </Route> {/* Trang user */}
 
       <Route path='/admin' element={<MainAdmin/>}>

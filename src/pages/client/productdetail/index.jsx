@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
-import {useParams} from "react-router";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import Constanst from "../../../Constanst"; // Đảm bảo Constanst.DOMAIN_API chứa URL đúng của API của bạn
 
 const ProductDetail = () => {
-    const {id} = useParams(); // Lấy ID sản phẩm từ URL
+    const { id } = useParams(); // Lấy ID sản phẩm từ URL
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
 
@@ -25,13 +25,22 @@ const ProductDetail = () => {
     };
 
     const handleAddToCart = () => {
+        if (!product) return; // Kiểm tra nếu sản phẩm không tồn tại
+
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         const productInCart = cart.find(item => item.id === product.id);
 
+        // Kiểm tra nếu sản phẩm đã có trong giỏ, chỉ cần cập nhật số lượng
         if (productInCart) {
-            productInCart.quantity += quantity;
+            const newQuantity = productInCart.quantity + quantity;
+            if (newQuantity <= 10) { // Giới hạn số lượng tối đa là 10
+                productInCart.quantity = newQuantity;
+            } else {
+                alert("Số lượng sản phẩm tối đa là 10");
+                return;
+            }
         } else {
-            cart.push({...product, quantity});
+            cart.push({ ...product, quantity });
         }
 
         localStorage.setItem("cart", JSON.stringify(cart));
@@ -47,7 +56,7 @@ const ProductDetail = () => {
     };
 
     const calculateTotalPrice = () => {
-        return product.price ? product.price * quantity : 0;
+        return product?.price ? product.price * quantity : 0;
     };
 
     if (!product) return <div className="text-center">Đang tải...</div>;
