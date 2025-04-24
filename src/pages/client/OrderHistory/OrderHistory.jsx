@@ -119,8 +119,7 @@ const OrderHistory = () => {
 
     useEffect(() => {
         fetchOrderHistory();
-    }, [fetchOrderHistory]); // Gọi fetch khi component mount hoặc fetchOrderHistory thay đổi
-
+    }, [fetchOrderHistory]);
     // --- Phần Render ---
     if (loading) {
         return (

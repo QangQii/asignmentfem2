@@ -1,158 +1,183 @@
-import {useState} from "react";
-import {Button, Form, Modal} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Table, Button, Form } from "react-bootstrap";
+import Constanst from "../../../Constanst";
 
-const Order = () => {
-    const [orders, setOrders] = useState([
-        {id: "DH001", customer: "Nguyễn Minh Hoàng", total: "1.500.000 VND", status: "Đã giao"},
-        {id: "DH002", customer: "Trần Thị Hạnh", total: "750.000 VND", status: "Đang xử lý"},
-        {id: "DH003", customer: "Lê Thanh Sơn", total: "2.200.000 VND", status: "Đã giao"},
-        {id: "DH004", customer: "Phạm Ngọc Mai", total: "980.000 VND", status: "Đang vận chuyển"},
-        {id: "DH005", customer: "Hoàng Anh Dũng", total: "3.150.000 VND", status: "Đã hủy"},
-        {id: "DH006", customer: "Đặng Thị Lan", total: "1.000.000 VND", status: "Đang xử lý"},
-        {id: "DH007", customer: "Bùi Văn Tùng", total: "650.000 VND", status: "Đã giao"},
-        {id: "DH008", customer: "Võ Thị Hương", total: "1.850.000 VND", status: "Đã giao"},
-        {id: "DH009", customer: "Dương Quốc Bảo", total: "2.500.000 VND", status: "Đang vận chuyển"}
-    ]);
+const OrderList = () => {
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [editingOrderId, setEditingOrderId] = useState(null);
+    const [updatedPaymentStatus, setUpdatedPaymentStatus] = useState({});
+    const [updatedOrderStatus, setUpdatedOrderStatus] = useState({});
 
-    const [showModal, setShowModal] = useState(false);
-    const [editingOrder, setEditingOrder] = useState(null);
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [newOrder, setNewOrder] = useState({id: "", customer: "", total: "", status: "Đang xử lý"});
-
-    const handleEdit = (index) => {
-        setEditingOrder({...orders[index], index});
-        setShowModal(true);
+    const fetchOrders = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${Constanst.DOMAIN_API}/api/oders`);
+            if (!response.ok) {
+                throw new Error("Lỗi khi lấy dữ liệu đơn hàng");
+            }
+            const data = await response.json();
+            setOrders(data);
+        } catch (err) {
+            console.error("Lỗi fetch đơn hàng:", err);
+            setError("Lỗi khi lấy dữ liệu đơn hàng");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleDelete = (index) => {
-        setOrders(orders.filter((_, i) => i !== index));
+    useEffect(() => {
+        fetchOrders();
+    }, []);
+
+    const handleEdit = (id) => {
+        setEditingOrderId(id);
+        const orderToEdit = orders.find(order => order.id === id);
+        if (orderToEdit) {
+            setUpdatedPaymentStatus({ [id]: orderToEdit.payment_status });
+            setUpdatedOrderStatus({ [id]: orderToEdit.status });
+        }
     };
 
-    const handleSave = () => {
-        const updatedOrders = [...orders];
-        updatedOrders[editingOrder.index] = {...editingOrder};
-        delete updatedOrders[editingOrder.index].index;
-        setOrders(updatedOrders);
-        setShowModal(false);
+    const handlePaymentStatusChange = (id, value) => {
+        setUpdatedPaymentStatus({ ...updatedPaymentStatus, [id]: parseInt(value) });
     };
 
-    const handleAdd = () => {
-        setOrders([...orders, newOrder]);
-        setShowAddModal(false);
-        setNewOrder({id: "", customer: "", total: "", status: "Đang xử lý"});
+    const handleOrderStatusChange = (id, value) => {
+        setUpdatedOrderStatus({ ...updatedOrderStatus, [id]: parseInt(value) });
+    };
+
+    const handleSave = async (id) => {
+        const payment_status = updatedPaymentStatus[id];
+        const status = updatedOrderStatus[id];
+
+        try {
+            const response = await fetch(`${Constanst.DOMAIN_API}/api/oders/${id}`, {
+                method: 'PUT', // Giả sử bạn có endpoint PUT để cập nhật
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ payment_status, status }),
+            });
+
+            if (response.ok) {
+                alert(`Đơn hàng ID ${id} đã được cập nhật.`);
+                setEditingOrderId(null);
+                fetchOrders();
+            } else {
+                const errorData = await response.json();
+                setError(`Lỗi khi cập nhật đơn hàng ID ${id}: ${errorData.message || response.statusText}`);
+            }
+        } catch (error) {
+            console.error("Lỗi cập nhật đơn hàng:", error);
+            setError(`Lỗi mạng khi cập nhật đơn hàng ID ${id}.`);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingOrderId(null);
     };
 
     return (
-        <div className="container mt-5 pt-4">
-            <h2 className="mb-4">Danh Sách Đơn Hàng</h2>
-            <button className="btn btn-success mb-3" onClick={() => setShowAddModal(true)}>Thêm</button>
-            <table className="table table-striped table-bordered text-center">
-                <thead className="thead-dark">
-                <tr>
-                    <th>Mã Đơn</th>
-                    <th>Khách Hàng</th>
-                    <th>Tổng Tiền</th>
-                    <th>Trạng Thái</th>
-                    <th>Hành Động</th>
-                </tr>
-                </thead>
-                <tbody>
-                {orders.map((order, index) => (
-                    <tr key={index}>
-                        <td>{order.id}</td>
-                        <td>{order.customer}</td>
-                        <td>{order.total}</td>
-                        <td><strong>{order.status}</strong></td>
-                        <td>
-                            <button className="btn btn-warning btn-sm mx-1" onClick={() => handleEdit(index)}>Sửa
-                            </button>
-                            <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDelete(index)}>Xóa
-                            </button>
-                        </td>
+        <div className="container mt-5">
+            <h2>Danh sách đơn hàng</h2>
+            {loading && <p>Đang tải dữ liệu đơn hàng...</p>}
+            {error && <p className="text-danger">{error}</p>}
+            {!loading && !error && (
+                <Table striped bordered hover className="text-center">
+                    <thead className="table-dark">
+                    <tr>
+                        <th>STT</th>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Điện thoại</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái thanh toán</th>
+                        <th>Trạng thái đơn hàng</th>
+                        <th>ID Người dùng</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày tạo</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Hành Động</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
-
-            {/* Modal chỉnh sửa */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Chỉnh Sửa Đơn Hàng</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {editingOrder && (
-                        <Form>
-                            <Form.Group>
-                                <Form.Label>Mã Đơn</Form.Label>
-                                <Form.Control type="text" value={editingOrder.id} readOnly/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Khách Hàng</Form.Label>
-                                <Form.Control type="text" value={editingOrder.customer}
-                                              onChange={(e) => setEditingOrder({
-                                                  ...editingOrder,
-                                                  customer: e.target.value
-                                              })}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Tổng Tiền</Form.Label>
-                                <Form.Control type="text" value={editingOrder.total} onChange={(e) => setEditingOrder({
-                                    ...editingOrder,
-                                    total: e.target.value
-                                })}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Trạng Thái</Form.Label>
-                                <Form.Control as="select" value={editingOrder.status} onChange={(e) => setEditingOrder({
-                                    ...editingOrder,
-                                    status: e.target.value
-                                })}>
-                                    <option>Đã giao</option>
-                                    <option>Đang xử lý</option>
-                                    <option>Đang vận chuyển</option>
-                                    <option>Đã hủy</option>
-                                </Form.Control>
-                            </Form.Group>
-                        </Form>
+                    </thead>
+                    <tbody>
+                    {orders.length === 0 ? (
+                        <tr>
+                            <td colSpan="12">Không có đơn hàng nào</td>
+                        </tr>
+                    ) : (
+                        orders.map((order, index) => (
+                            <tr key={order.id}>
+                                <td>{index + 1}</td>
+                                <td>{order.id}</td>
+                                <td>{order.name}</td>
+                                <td>{order.phone}</td>
+                                <td>
+                                    {order.payments === 1 ? "COD" :
+                                        order.payments === 2 ? "Chuyển khoản" : "Không xác định"}
+                                </td>
+                                <td>
+                                    {editingOrderId === order.id ? (
+                                        <Form.Control
+                                            as="select"
+                                            value={updatedPaymentStatus[order.id]}
+                                            onChange={(e) => handlePaymentStatusChange(order.id, e.target.value)}
+                                        >
+                                            <option value={0}>Chưa thanh toán</option>
+                                            <option value={1}>Đã thanh toán</option>
+                                        </Form.Control>
+                                    ) : (
+                                        order.payment_status === 1 ? "Đã thanh toán" : "Chưa thanh toán"
+                                    )}
+                                </td>
+                                <td>
+                                    {editingOrderId === order.id ? (
+                                        <Form.Control
+                                            as="select"
+                                            value={updatedOrderStatus[order.id]}
+                                            onChange={(e) => handleOrderStatusChange(order.id, e.target.value)}
+                                        >
+                                            <option value={0}>Đã hủy</option>
+                                            <option value={1}>Chờ xác nhận</option>
+                                            <option value={2}>Đã xác nhận</option>
+                                            <option value={3}>Đang giao hàng</option>
+                                            <option value={4}>Đã giao</option>
+                                        </Form.Control>
+                                    ) : (
+                                        {
+                                            1: "Chờ xác nhận",
+                                            2: "Đã xác nhận",
+                                            3: "Đang giao hàng",
+                                            4: "Đã giao",
+                                            0: "Đã hủy",
+                                        }[order.status] || "Không xác định"
+                                    )}
+                                </td>
+                                <td>{order.user_id}</td>
+                                <td>{order.address}</td>
+                                <td>{new Date(order.createdAt).toLocaleString()}</td>
+                                <td>{new Date(order.updatedAt).toLocaleString()}</td>
+                                <td>
+                                    {editingOrderId === order.id ? (
+                                        <>
+                                            <Button variant="success" size="sm" onClick={() => handleSave(order.id)}>Lưu</Button>
+                                            <Button variant="secondary" size="sm" className="ms-2" onClick={handleCancelEdit}>Hủy</Button>
+                                        </>
+                                    ) : (
+                                        <Button variant="warning" size="sm" onClick={() => handleEdit(order.id)}>Sửa</Button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))
                     )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>Hủy</Button>
-                    <Button variant="primary" onClick={handleSave}>Lưu</Button>
-                </Modal.Footer>
-            </Modal>
-
-            {/* Modal thêm đơn hàng */}
-            <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Thêm Đơn Hàng</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group>
-                            <Form.Label>Mã Đơn</Form.Label>
-                            <Form.Control type="text" value={newOrder.id}
-                                          onChange={(e) => setNewOrder({...newOrder, id: e.target.value})}/>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Khách Hàng</Form.Label>
-                            <Form.Control type="text" value={newOrder.customer}
-                                          onChange={(e) => setNewOrder({...newOrder, customer: e.target.value})}/>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Tổng Tiền</Form.Label>
-                            <Form.Control type="text" value={newOrder.total}
-                                          onChange={(e) => setNewOrder({...newOrder, total: e.target.value})}/>
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowAddModal(false)}>Hủy</Button>
-                    <Button variant="success" onClick={handleAdd}>Thêm</Button>
-                </Modal.Footer>
-            </Modal>
+                    </tbody>
+                </Table>
+            )}
         </div>
     );
-}
+};
 
-export default Order;
+export default OrderList;
