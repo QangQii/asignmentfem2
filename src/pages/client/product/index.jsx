@@ -51,6 +51,7 @@ const ProductClient = () => {
                                             src={`${Constanst.DOMAIN_API}/uploads/${product.images}`}
                                             className="img-fluid product-thumbnail"
                                             alt={product.name}
+                                            style={{height: '300px', width: '250px', objectFit: 'cover'}}
                                         />
                                         <h3 className="product-title">{product.name}</h3>
                                         <strong className="product-price">
