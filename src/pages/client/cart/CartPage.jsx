@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Button, Image, Table} from 'react-bootstrap';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, Button, Image, Table } from 'react-bootstrap';
 import Constanst from "../../../Constanst"; // Đảm bảo đường dẫn đúng
-import {useNavigate} from 'react-router-dom';
-import {FaMinus, FaPlus, FaTrashAlt} from 'react-icons/fa';
-import {jwtDecode} from 'jwt-decode'; // *** THÊM IMPORT NÀY ***
+import { useNavigate } from 'react-router-dom';
+import { FaMinus, FaPlus, FaTrashAlt } from 'react-icons/fa';
+import { jwtDecode } from 'jwt-decode'; // *** THÊM IMPORT NÀY ***
 
 const CartPage = () => {
     const [cart, setCart] = useState([]);
@@ -106,7 +106,7 @@ const CartPage = () => {
                 } else if (action === 'decrease' && newQuantity > 1) {
                     newQuantity -= 1;
                 }
-                return {...item, quantity: newQuantity};
+                return { ...item, quantity: newQuantity };
             }
             return item;
         });
@@ -117,15 +117,15 @@ const CartPage = () => {
         return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     };
 
-    // --- Xử lý thanh toán (handleCheckout) VẪN CẦN GỬI TOKEN LÊN BACKEND ---
-    const handleCheckout = async () => {
+    // --- Xử lý thanh toán (handleCheckout) ĐÃ SỬA ĐỂ CHỈ CHUYỂN HƯỚNG ---
+    const handleCheckout = () => {
         console.log("Attempting checkout...");
         setError("");
 
-        // 1. Kiểm tra trạng thái đăng nhập (dựa trên state đã set bởi checkLoginStatus)
+        // 1. Kiểm tra trạng thái đăng nhập
         if (!isLoggedIn || !userInfo) {
             console.log("User not logged in or userInfo missing. Redirecting to login.");
-            navigate('/login', {state: {from: '/cart'}});
+            navigate('/login', { state: { from: '/cart' } });
             return;
         }
 
@@ -136,74 +136,17 @@ const CartPage = () => {
             return;
         }
 
-        // 3. **LẤY TOKEN ĐỂ GỬI LÊN BACKEND XÁC THỰC LẠI**
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            console.error("Auth token missing at checkout! This shouldn't happen if isLoggedIn is true.");
-            setError("Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
-            checkLoginStatus(); // Cập nhật lại trạng thái phòng trường hợp token bị xóa bởi tab khác
-            navigate('/login', {state: {from: '/cart'}});
-            return;
-        }
-
-        // 4. Chuẩn bị dữ liệu đơn hàng (sử dụng thông tin từ userInfo đã giải mã)
-        const orderData = {
-            user_id: userInfo.id, // Lấy từ state userInfo (đã giải mã)
-            items: cart.map(item => ({
-                productId: item.id,
-                quantity: item.quantity,
-                price: item.price
-            })),
-            name: userInfo.name || `User ${userInfo.id}`, // Lấy từ state userInfo
-            phone: userInfo.phone || "N/A", // Lấy từ state userInfo (nếu có trong token)
-            address: "Default Address", // Địa chỉ thường cần form nhập riêng
-            payments: 1, // COD
-            payment_status: 0, // Chưa thanh toán
-            status: 1 // Chờ xác nhận
-        };
-
-        console.log("Sending order data to /api/orders/checkout:", orderData);
-
-        // 5. GỬI YÊU CẦU LÊN BACKEND (VẪN KÈM TOKEN TRONG HEADER)
-        try {
-            const res = await fetch(`${Constanst.DOMAIN_API}/api/orders/checkout`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // **BACKEND PHẢI XÁC THỰC TOKEN NÀY**
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(orderData),
-            });
-
-            // 6. Xử lý kết quả (giữ nguyên)
-            if (res.ok) {
-                const result = await res.json();
-                console.log("Checkout successful:", result);
-                alert("Đặt hàng thành công!");
-                localStorage.removeItem('cart');
-                setCart([]);
-                navigate('/order-history');
-            } else {
-                let errorMsg = `Có lỗi xảy ra khi đặt hàng (Status: ${res.status}).`;
-                try {
-                    const result = await res.json();
-                    console.error("Checkout error response:", result);
-                    errorMsg = result.message || errorMsg;
-                } catch (e) {
-                    console.error("Could not parse error JSON:", await res.text());
-                }
-                setError(errorMsg);
+        // 3. Chuyển hướng đến trang nhập thông tin địa chỉ (OrderPage)
+        navigate('/oder', {
+            state: {
+                cartItems: cart, // Truyền thông tin giỏ hàng
+                userInfo: userInfo // Truyền thông tin người dùng
             }
-        } catch (error) {
-            console.error("Network error during checkout:", error);
-            setError("Không thể kết nối đến máy chủ để đặt hàng. Vui lòng kiểm tra kết nối mạng và thử lại.");
-        }
+        });
     };
 
     // --- Hiển thị giỏ hàng chi tiết (renderCartItems) giữ nguyên ---
     const renderCartItems = () => {
-        // ... (code render bảng giữ nguyên) ...
         if (cart.length === 0) {
             return <Alert variant="info">Giỏ hàng của bạn đang trống.</Alert>;
         }
@@ -227,7 +170,7 @@ const CartPage = () => {
                             <Image
                                 src={item.images ? `${Constanst.DOMAIN_API}/uploads/${item.images}` : "/path/to/default-image.jpg"}
                                 alt={item.name}
-                                style={{width: '60px', height: 'auto', objectFit: 'contain'}}
+                                style={{ width: '60px', height: 'auto', objectFit: 'contain' }}
                                 thumbnail
                             />
                         </td>
@@ -239,33 +182,29 @@ const CartPage = () => {
                                 size="sm"
                                 onClick={() => handleQuantityChange(item.id, 'decrease')}
                                 disabled={item.quantity <= 1}
-                                style={{marginRight: '5px'}}
+                                style={{ marginRight: '5px' }}
                             >
-                                <FaMinus/>
+                                <FaMinus />
                             </Button>
-                            <span style={{
-                                margin: '0 10px',
-                                minWidth: '20px',
-                                display: 'inline-block'
-                            }}>{item.quantity}</span>
+                            <span style={{ margin: '0 10px', minWidth: '20px', display: 'inline-block' }}>{item.quantity}</span>
                             <Button
                                 variant="outline-primary"
                                 size="sm"
                                 onClick={() => handleQuantityChange(item.id, 'increase')}
                                 disabled={item.quantity >= 10}
-                                style={{marginLeft: '5px'}}
+                                style={{ marginLeft: '5px' }}
                             >
-                                <FaPlus/>
+                                <FaPlus />
                             </Button>
                         </td>
                         <td>{(item.price * item.quantity).toLocaleString()} VNĐ</td>
                         <td>
                             <Button variant="danger" size="sm" onClick={() => removeFromCart(item.id)}>
-                                <FaTrashAlt/>
+                                <FaTrashAlt />
                             </Button>
                         </td>
                     </tr>
-                    ))}
+                ))}
                 </tbody>
                 <tfoot>
                 <tr>
@@ -292,7 +231,6 @@ const CartPage = () => {
             {cart.length > 0 && (
                 <div className="text-center mt-4 mb-4">
                     <Button variant="success" size="lg" onClick={handleCheckout}>
-                        {/* Nút này giờ sẽ cập nhật đúng dựa trên isLoggedIn state */}
                         {isLoggedIn ? "Tiến hành thanh toán" : "Đăng nhập để thanh toán"}
                     </Button>
                 </div>
