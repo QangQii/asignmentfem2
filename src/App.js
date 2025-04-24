@@ -26,6 +26,8 @@ import ProductDetail from './pages/client/productdetail';
 import CartPage from './pages/client/cart/CartPage';
 import Profile from './pages/client/profile';
 import OrderPage from './pages/client/Oder/OrderPage';
+import OrderHistory from './pages/client/OrderHistory/OrderHistory';
+
 function App() {
 
 
@@ -46,6 +48,7 @@ function App() {
           <Route path='register' element={<Register/>}/>
           <Route path='profile' element={<Profile/>}/>
           <Route path='oder' element={<OrderPage/>}/>
+          <Route path='order-history' element={<OrderHistory/>}/>
       </Route> {/* Trang user */}
 
       <Route path='/admin' element={<MainAdmin/>}>

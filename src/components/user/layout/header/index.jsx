@@ -101,7 +101,8 @@ const HeaderClient = () =>{
                                     <ul className="dropdown-menu dropdown-menu-end"
                                         aria-labelledby="navbarDropdownUserLink">
                                         <li><Link className="dropdown-item" to="/profile">Hồ sơ</Link></li>
-                                        <li><Link className="dropdown-item" to="/orders">Đơn hàng của tôi</Link></li>
+                                        <li><Link className="nav-link-dropdown-item" to="/order-history">Đơn hàng của
+                                            tôi</Link></li>
                                         <li>
                                             <hr className="dropdown-divider"/>
                                         </li>
