@@ -3,7 +3,7 @@ import {Link} from 'react-router'; // Đổi thành react-router-dom
 import Constanst from "../../../Constanst";
 
 const CategoryList = () => {
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState([]); // Mặc định là mảng rỗng
 
     // Hàm lấy danh sách danh mục
     useEffect(() => {
@@ -11,7 +11,13 @@ const CategoryList = () => {
             try {
                 const res = await fetch(`${Constanst.DOMAIN_API}/api/categories/list`);
                 const data = await res.json();
-                setCategories(data);
+
+                // Kiểm tra xem dữ liệu có phải là mảng hay không
+                if (Array.isArray(data)) {
+                    setCategories(data);
+                } else {
+                    console.error("Dữ liệu không phải là mảng:", data);
+                }
             } catch (error) {
                 console.error("Lỗi khi tải danh mục:", error);
             }
@@ -53,23 +59,15 @@ const CategoryList = () => {
                 <tr>
                     <th>Id</th>
                     <th>Tên danh mục</th>
-                    <th>Hình ảnh</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
-                {categories.map((category) => (
+                {Array.isArray(categories) && categories.map((category) => (
                     <tr key={category.id}>
                         <td>{category.id}</td>
                         <td>{category.name}</td>
-                        <td>
-                            <img
-                                src={category.images} // Đảm bảo đúng tên trường từ API
-                                alt={category.name}
-                                style={{width: "100px", height: "auto"}}
-                            />
-                        </td>
                         <td>{category.status === 1 ? "Hiển thị" : "Ẩn"}</td>
                         <td>
                             <Link

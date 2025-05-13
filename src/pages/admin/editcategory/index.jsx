@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router";
+import {Link, useNavigate, useParams} from "react-router"; // Đổi thành 'react-router-dom'
 import Constanst from "../../../Constanst";
 
 const EditCategory = () => {
     const {id} = useParams();
-    console.log("Editing category with ID:", id);
     const navigate = useNavigate();
     const [category, setCategory] = useState({
         name: "",
-        images: "",
         status: "Hiển thị",
     });
 
@@ -21,7 +19,6 @@ const EditCategory = () => {
                 if (res.ok) {
                     setCategory({
                         name: data.name,
-                        images: data.images, // ✅ Sửa từ 'image' thành 'images'
                         status: data.status === 1 ? "Hiển thị" : "Ẩn",
                     });
                 } else {
@@ -38,12 +35,18 @@ const EditCategory = () => {
     }, [id, navigate]);
 
     const handleChange = (e) => {
-        setCategory({...category, [e.target.name]: e.target.value});
+        const {name, value} = e.target;
+        setCategory({...category, [name]: value});
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const status = category.status === "Hiển thị" ? 1 : 0;
+
+        const data = {
+            name: category.name,
+            status: status,
+        };
 
         try {
             const res = await fetch(`${Constanst.DOMAIN_API}/api/categories/${id}`, {
@@ -51,12 +54,12 @@ const EditCategory = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({...category, status}),
+                body: JSON.stringify(data),
             });
 
             if (!res.ok) {
                 const err = await res.json();
-                throw new Error(err.message || "Cập nhật thất bại");
+                throw new Error(err.error || "Cập nhật thất bại");
             }
 
             alert("Cập nhật danh mục thành công!");
@@ -66,6 +69,7 @@ const EditCategory = () => {
             alert("Lỗi khi cập nhật danh mục: " + err.message);
         }
     };
+
 
     return (
         <div className="container mt-5">
@@ -78,17 +82,6 @@ const EditCategory = () => {
                         className="form-control"
                         name="name"
                         value={category.name}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Hình ảnh (URL)</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="images"
-                        value={category.images} // ✅ Đã sửa đúng key
                         onChange={handleChange}
                         required
                     />

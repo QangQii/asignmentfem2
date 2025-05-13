@@ -4,7 +4,7 @@ import "../../../../assets/css/tiny-slider.css";
 import "../../../../assets/css/style.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import {Link, useNavigate} from 'react-router-dom'; // đường dẫn click bằng thẻ link=\
+import {Link, useNavigate} from 'react-router'; // đường dẫn click bằng thẻ link=\
 import {jwtDecode} from 'jwt-decode';
 
 const HeaderClient = () =>{
