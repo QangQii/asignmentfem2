@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import {useEffect, useState} from "react";
+import {useParams} from "react-router";
 import Constanst from "../../../Constanst"; // Đảm bảo Constanst.DOMAIN_API chứa URL đúng của API của bạn
 
 const ProductDetail = () => {
@@ -65,11 +65,34 @@ const ProductDetail = () => {
     const buttonStyle = {
         fontSize: '20px',
         width: '40px',
-        height: '40px'
+        height: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0',
+        borderRadius: '50%',
+        transition: 'background-color 0.3s ease',
     };
 
     const addToCartButtonStyle = {
         marginBottom: "500px",
+        transition: 'all 0.3s ease',
+    };
+
+    // CSS Styles (Outside return)
+    const productImageStyle = {
+        maxWidth: '100%',
+        height: 'auto',
+        borderRadius: '8px',
+        transition: 'transform 0.3s ease',
+    };
+
+    const handleImageHover = (e) => {
+        e.target.style.transform = 'scale(1.1)';
+    };
+
+    const handleImageLeave = (e) => {
+        e.target.style.transform = 'scale(1)';
     };
 
     return (
@@ -81,10 +104,9 @@ const ProductDetail = () => {
                             src={product.images ? `${Constanst.DOMAIN_API}/uploads/${product.images}` : "/path/to/default-image.jpg"}
                             alt={product.name}
                             className="card-img-top"
-                            style={{
-                                maxWidth: '300px',  // Giới hạn chiều rộng tối đa là 500px
-                                maxHeight: '500px', // Giới hạn chiều cao tối đa là 400px
-                            }}
+                            style={productImageStyle}
+                            onMouseEnter={handleImageHover}
+                            onMouseLeave={handleImageLeave}
                         />
                     </div>
                 </div>
