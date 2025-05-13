@@ -1,18 +1,17 @@
 import React, {useEffect, useState} from "react";
-import {Link} from 'react-router'; // Đổi thành react-router-dom
+import {Link} from 'react-router'; // ✅ Đổi đúng thành react-router-dom
 import Constanst from "../../../Constanst";
 
 const CategoryList = () => {
-    const [categories, setCategories] = useState([]); // Mặc định là mảng rỗng
+    const [categories, setCategories] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
-    // Hàm lấy danh sách danh mục
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const res = await fetch(`${Constanst.DOMAIN_API}/api/categories/list`);
                 const data = await res.json();
 
-                // Kiểm tra xem dữ liệu có phải là mảng hay không
                 if (Array.isArray(data)) {
                     setCategories(data);
                 } else {
@@ -26,7 +25,6 @@ const CategoryList = () => {
         fetchCategories();
     }, []);
 
-    // Hàm xử lý xóa danh mục
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
             try {
@@ -38,7 +36,6 @@ const CategoryList = () => {
                     throw new Error('Không thể xóa danh mục');
                 }
 
-                // Cập nhật lại danh sách danh mục sau khi xóa
                 setCategories(categories.filter(category => category.id !== id));
                 alert("Danh mục đã được xóa!");
             } catch (error) {
@@ -48,12 +45,28 @@ const CategoryList = () => {
         }
     };
 
+    // Lọc danh mục theo từ khóa tìm kiếm (không phân biệt chữ hoa/thường)
+    const filteredCategories = categories.filter(category =>
+        category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="container mt-5">
             <h2>Danh sách danh mục</h2>
-            <Link to="/admin/category/addcategory" className="btn btn-primary mb-3">
-                Thêm danh mục
-            </Link>
+
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <input
+                    type="text"
+                    className="form-control w-50"
+                    placeholder="Tìm kiếm theo tên danh mục..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <Link to="/admin/category/addcategory" className="btn btn-primary ms-3">
+                    Thêm danh mục
+                </Link>
+            </div>
+
             <table className="table table-bordered">
                 <thead className="table-dark">
                 <tr>
@@ -64,7 +77,7 @@ const CategoryList = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {Array.isArray(categories) && categories.map((category) => (
+                {filteredCategories.map((category) => (
                     <tr key={category.id}>
                         <td>{category.id}</td>
                         <td>{category.name}</td>
@@ -78,13 +91,18 @@ const CategoryList = () => {
                             </Link>
                             <button
                                 className="btn btn-danger btn-sm"
-                                onClick={() => handleDelete(category.id)} // Gọi hàm xóa khi nhấn nút
+                                onClick={() => handleDelete(category.id)}
                             >
                                 Xóa
                             </button>
                         </td>
                     </tr>
                 ))}
+                {filteredCategories.length === 0 && (
+                    <tr>
+                        <td colSpan="4" className="text-center">Không tìm thấy danh mục phù hợp</td>
+                    </tr>
+                )}
                 </tbody>
             </table>
         </div>
