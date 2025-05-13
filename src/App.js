@@ -27,6 +27,7 @@ import CartPage from './pages/client/cart/CartPage';
 import Profile from './pages/client/profile';
 import OrderPage from './pages/client/Oder/OrderPage';
 import OrderHistory from './pages/client/OrderHistory/OrderHistory';
+import Edituser from "./pages/admin/edituser";
 
 function App() {
 
@@ -55,6 +56,8 @@ function App() {
           <Route index element={<Dashboard/>}/>
           <Route path='order' element={<Order/>}/>
           <Route path='user' element={<User/>}/>
+          <Route path="user/edituser/:id" element={<Edituser/>}/>
+
           <Route path='comment' element={<Comment/>}/>
           <Route path='comment_edit' element={<EditComment/>}/>
           <Route path='product' element={
