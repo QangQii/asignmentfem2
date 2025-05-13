@@ -42,6 +42,11 @@ const ProductClient = () => {
 
     // Hàm lọc sản phẩm theo tên, danh mục, khoảng giá và thứ tự sắp xếp
     const filteredProducts = products.filter(product => {
+        // Kiểm tra trạng thái sản phẩm
+        if (product.status !== 1) {
+            return false; // Ẩn sản phẩm nếu status không phải là 1
+        }
+
         // Kiểm tra tên sản phẩm có chứa từ khóa tìm kiếm không
         const matchesSearchQuery = product.name.toLowerCase().includes(searchQuery.toLowerCase());
 
