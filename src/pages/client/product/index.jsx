@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {Link} from "react-router";
-import Constanst from "../../../Constanst"; // Đảm bảo Constanst.DOMAIN_API chứa URL đúng của API của bạn
+import {Link} from "react-router-dom";
+import Constanst from "../../../Constanst";
 
 const ProductClient = () => {
     const [products, setProducts] = useState([]); // Dữ liệu sản phẩm
@@ -178,34 +178,34 @@ const ProductClient = () => {
                                     </div>
                                 ) : (
                                     sortedProducts().map((product) => (
-                                        <div className="col-12 col-md-6 col-lg-4 mb-4" key={product.id}>
-                                            <div className="card h-100 shadow-sm">
-                                                <Link to={`/product/${product.id}`}>
-                                                    <img
-                                                        src={`${Constanst.DOMAIN_API}/uploads/${product.images}`}
-                                                        className="card-img-top img-fluid"
-                                                        alt={product.name}
-                                                        style={{height: "200px", objectFit: "cover"}}
-                                                    />
-                                                </Link>
-                                                <div className="card-body d-flex flex-column">
-                                                    <h5 className="card-title">{product.name}</h5>
-                                                    <p className="card-text mt-auto fw-bold text-danger">
-                                                        {product.price
-                                                            ? product.price.toLocaleString() + " VNĐ"
-                                                            : "Giá chưa có"}
-                                                    </p>
-                                                    <div className="d-flex justify-content-between mt-3">
-                                                        <Link to={`/product/${product.id}`} className="btn btn-info">
-                                                            Xem Chi Tiết
-                                                        </Link>
-                                                        <button
-                                                            className="btn btn-success"
-                                                            onClick={() => handleAddToCart(product)}
-                                                        >
-                                                            Thêm Giỏ Hàng
-                                                        </button>
-                                                    </div>
+                                        <div className="col-12 col-md-4 col-lg-3 mb-5 mb-md-0" key={product.id}>
+                                            <div className="product-item"
+                                                 style={{lineHeight: '1.7', marginBottom: '20px'}}>
+                                                <img
+                                                    src={`${Constanst.DOMAIN_API}/uploads/${product.images}`}
+                                                    className="img-fluid product-thumbnail"
+                                                    alt={product.name}
+                                                    style={{height: "250px", width: "auto", objectFit: "cover"}}
+                                                />
+                                                <h3 className="product-title"
+                                                    style={{fontSize: '16px'}}>{product.name}</h3>
+                                                <strong className="product-price">
+                                                    {product.price
+                                                        ? product.price.toLocaleString() + " VNĐ"
+                                                        : "Giá chưa có"}
+                                                </strong>
+                                                <div className="d-flex justify-content-between mt-3">
+                                                    <button
+                                                        className="btn btn-sm btn-primary"
+                                                        onClick={() => handleAddToCart(product)}
+                                                        style={{fontSize: '14px', padding: '8px 10px'}}
+                                                    >
+                                                        Thêm vào giỏ
+                                                    </button>
+                                                    <Link to={`/product/${product.id}`} className="btn btn-sm btn-info"
+                                                          style={{fontSize: '14px', padding: '8px 10px'}}>
+                                                        Xem chi tiết
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
