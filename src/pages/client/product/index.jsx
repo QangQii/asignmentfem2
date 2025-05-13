@@ -7,6 +7,8 @@ const ProductClient = () => {
     const [categories, setCategories] = useState([]); // Dữ liệu danh mục
     const [selectedCategory, setSelectedCategory] = useState(null); // Danh mục đã chọn
     const [searchQuery, setSearchQuery] = useState(""); // Từ khóa tìm kiếm
+    const [priceRange, setPriceRange] = useState("all"); // Khoảng giá đã chọn
+    const [sortOrder, setSortOrder] = useState("none"); // Thứ tự sắp xếp giá
 
     // Lấy dữ liệu sản phẩm và danh mục khi component load
     useEffect(() => {
@@ -38,7 +40,7 @@ const ProductClient = () => {
         }
     };
 
-    // Lọc sản phẩm theo tên và danh mục
+    // Hàm lọc sản phẩm theo tên, danh mục, khoảng giá và thứ tự sắp xếp
     const filteredProducts = products.filter(product => {
         // Kiểm tra tên sản phẩm có chứa từ khóa tìm kiếm không
         const matchesSearchQuery = product.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -46,8 +48,30 @@ const ProductClient = () => {
         // Kiểm tra sản phẩm có thuộc danh mục đã chọn không
         const matchesCategory = selectedCategory ? product.category_id === selectedCategory : true;
 
-        return matchesSearchQuery && matchesCategory;
+        // Kiểm tra khoảng giá
+        let matchesPriceRange = true;
+        if (priceRange === "0-10000") {
+            matchesPriceRange = product.price >= 0 && product.price <= 10000;
+        } else if (priceRange === "10000-100000") {
+            matchesPriceRange = product.price >= 10000 && product.price <= 100000;
+        } else if (priceRange === "100000-1000000") {
+            matchesPriceRange = product.price >= 100000 && product.price <= 1000000;
+        } else if (priceRange === "1000000-100000000") {
+            matchesPriceRange = product.price >= 1000000 && product.price <= 100000000;
+        }
+
+        return matchesSearchQuery && matchesCategory && matchesPriceRange;
     });
+
+    // Hàm sắp xếp sản phẩm theo giá
+    const sortedProducts = () => {
+        if (sortOrder === "asc") {
+            return filteredProducts.sort((a, b) => a.price - b.price);
+        } else if (sortOrder === "desc") {
+            return filteredProducts.sort((a, b) => b.price - a.price);
+        }
+        return filteredProducts;
+    };
 
     // Hàm thêm sản phẩm vào giỏ hàng
     const handleAddToCart = (product) => {
@@ -103,6 +127,22 @@ const ProductClient = () => {
                                     ))
                                 )}
                             </ul>
+
+                            {/* Dropdown lọc giá nằm dưới danh mục */}
+                            <div className="mt-4">
+                                <h5>Lọc theo giá</h5>
+                                <select
+                                    className="form-select"
+                                    value={priceRange}
+                                    onChange={(e) => setPriceRange(e.target.value)} // Cập nhật khoảng giá khi người dùng chọn
+                                >
+                                    <option value="all">Tất cả giá</option>
+                                    <option value="0-10000">Từ 0 VNĐ đến 10,000 VNĐ</option>
+                                    <option value="10000-100000">Từ 10,000 VNĐ đến 100,000 VNĐ</option>
+                                    <option value="100000-1000000">Từ 100,000 VNĐ đến 1,000,000 VNĐ</option>
+                                    <option value="1000000-100000000">Từ 1,000,000 VNĐ đến 100,000,000 VNĐ</option>
+                                </select>
+                            </div>
                         </div>
 
                         {/* Cột bên phải - Sản phẩm */}
@@ -118,13 +158,26 @@ const ProductClient = () => {
                                 />
                             </div>
 
+                            {/* Dropdown sắp xếp giá */}
+                            <div className="mb-4">
+                                <select
+                                    className="form-select"
+                                    value={sortOrder}
+                                    onChange={(e) => setSortOrder(e.target.value)} // Cập nhật thứ tự sắp xếp khi người dùng chọn
+                                >
+                                    <option value="none">Sắp xếp theo giá</option>
+                                    <option value="asc">Giá từ thấp đến cao</option>
+                                    <option value="desc">Giá từ cao đến thấp</option>
+                                </select>
+                            </div>
+
                             <div className="row">
-                                {filteredProducts.length === 0 ? (
+                                {sortedProducts().length === 0 ? (
                                     <div className="col-12">
                                         <p>Không có sản phẩm nào</p>
                                     </div>
                                 ) : (
-                                    filteredProducts.map((product) => (
+                                    sortedProducts().map((product) => (
                                         <div className="col-12 col-md-6 col-lg-4 mb-4" key={product.id}>
                                             <div className="card h-100 shadow-sm">
                                                 <Link to={`/product/${product.id}`}>
