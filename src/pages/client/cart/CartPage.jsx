@@ -1,151 +1,176 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Image, Table } from 'react-bootstrap';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, Button, Image, Table} from 'react-bootstrap';
 import Constanst from "../../../Constanst"; // Đảm bảo đường dẫn đúng
-import { useNavigate } from 'react-router-dom';
-import { FaMinus, FaPlus, FaTrashAlt } from 'react-icons/fa';
-import { jwtDecode } from 'jwt-decode'; // *** THÊM IMPORT NÀY ***
+import {useNavigate} from 'react-router-dom';
+import {FaMinus, FaPlus, FaTrashAlt} from 'react-icons/fa';
+import {jwtDecode} from 'jwt-decode'; // *** THÊM IMPORT NÀY ***
 
 const CartPage = () => {
     const [cart, setCart] = useState([]);
     const [error, setError] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userInfo, setUserInfo] = useState(null); // Sẽ lưu trữ payload đã giải mã
+    const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
 
-    // --- Hàm lấy giỏ hàng (giữ nguyên) ---
-    const getCartFromLocalStorage = useCallback(() => {
-        const storedCart = localStorage.getItem('cart');
-        if (storedCart) {
+    // --- Lấy giỏ hàng từ backend thay vì localStorage ---
+    const getCartFromAPI = useCallback(async () => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
             try {
-                const parsedCart = JSON.parse(storedCart);
-                const validatedCart = parsedCart.map(item => ({
-                    ...item,
-                    quantity: Number(item.quantity) || 1
-                }));
-                setCart(validatedCart);
-            } catch (e) {
-                console.error("Lỗi parse giỏ hàng từ localStorage:", e);
-                localStorage.removeItem('cart');
-                setCart([]);
+                const response = await fetch(`${Constanst.DOMAIN_API}/api/cart`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const cartData = await response.json();
+                    setCart(cartData);
+                } else {
+                    throw new Error('Không thể tải giỏ hàng');
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy giỏ hàng từ API:", error);
+                setError("Không thể tải giỏ hàng.");
             }
         } else {
             setCart([]);
         }
     }, []);
 
-    // --- Hàm lưu giỏ hàng (giữ nguyên) ---
-    const saveCartToLocalStorage = (updatedCart) => {
-        const cartToSave = updatedCart.filter(item => item.quantity > 0);
-        localStorage.setItem('cart', JSON.stringify(cartToSave));
-        setCart(cartToSave);
+    // --- Lưu giỏ hàng vào backend ---
+    const saveCartToAPI = async (productId, updatedCart) => {
+        const token = localStorage.getItem('authToken');
+        let productUpdated = {};
+        if (token) {
+            try {
+                updatedCart.map(item => {
+                    if (item.product_id === productId) {
+                        productUpdated = item
+                    }
+                })
+                const response = await fetch(`${Constanst.DOMAIN_API}/api/cart/update/` + productId, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({cart: productUpdated})
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error saving cart:', errorData);  // Log lỗi nếu có
+                    throw new Error('Cập nhật giỏ hàng thất bại');
+                }
+                console.log('Giỏ hàng đã được cập nhật thành công');
+            } catch (error) {
+                console.error('Lỗi khi lưu giỏ hàng:', error);
+                setError("Không thể lưu giỏ hàng.");
+            }
+        }
     };
 
-    // --- Sửa hàm checkLoginStatus để giải mã token ---
+    const deleteCartToAPI = async (productId) => {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${Constanst.DOMAIN_API}/api/cart/` + productId, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        });
+    }
+
+
+    // --- Hàm check login (giải mã token) ---
     const checkLoginStatus = useCallback(() => {
         const token = localStorage.getItem('authToken');
 
         if (token) {
             try {
                 const decodedToken = jwtDecode(token);
-                console.log("Decoded Token:", decodedToken); // Xem payload token của bạn
-
-                // Kiểm tra xem token còn hạn không (exp tính bằng giây)
                 if (decodedToken.exp * 1000 > Date.now()) {
-                    console.log("Token hợp lệ và chưa hết hạn.");
                     setIsLoggedIn(true);
-                    // Lưu thông tin user từ payload vào state userInfo
-                    // **QUAN TRỌNG:** Đảm bảo các key (id, name, role, phone...) tồn tại trong payload token của bạn
                     setUserInfo({
-                        id: decodedToken.id, // Bắt buộc cho handleCheckout
-                        name: decodedToken.name, // Cần cho handleCheckout
-                        email: decodedToken.email, // Có thể cần
-                        role: decodedToken.role, // Có thể cần
-                        phone: decodedToken.phone || null // Lấy phone nếu có trong token
-                        // Thêm các trường khác từ token nếu cần
+                        id: decodedToken.id,
+                        name: decodedToken.name,
+                        email: decodedToken.email,
+                        role: decodedToken.role,
+                        phone: decodedToken.phone || null
                     });
                 } else {
-                    // Token hết hạn
-                    console.log("Token đã hết hạn.");
                     setIsLoggedIn(false);
                     setUserInfo(null);
-                    localStorage.removeItem('authToken'); // Xóa token hết hạn
+                    localStorage.removeItem('authToken');
                 }
             } catch (error) {
-                // Token không hợp lệ (không giải mã được)
-                console.error("Lỗi giải mã token:", error);
                 setIsLoggedIn(false);
                 setUserInfo(null);
-                localStorage.removeItem('authToken'); // Xóa token không hợp lệ
+                localStorage.removeItem('authToken');
             }
         } else {
-            // Không tìm thấy token
-            console.log("Không tìm thấy authToken.");
             setIsLoggedIn(false);
             setUserInfo(null);
         }
-    }, []); // useCallback với dependency rỗng vì nó chỉ đọc từ localStorage và dùng jwtDecode
+    }, []);
 
-    // --- useEffect để chạy khi component mount ---
     useEffect(() => {
-        getCartFromLocalStorage();
-        checkLoginStatus(); // Gọi hàm kiểm tra mới
-    }, [getCartFromLocalStorage, checkLoginStatus]); // Dependencies
+        getCartFromAPI();
+        checkLoginStatus();
+    }, [getCartFromAPI, checkLoginStatus]);
 
-    // --- Các hàm khác (removeFromCart, handleQuantityChange, calculateTotal) giữ nguyên ---
-    const removeFromCart = (productId) => {
-        const updatedCart = cart.filter(item => item.id !== productId);
-        saveCartToLocalStorage(updatedCart);
-    };
-
+    // --- Các hàm thay đổi giỏ hàng (tăng giảm số lượng, xóa sản phẩm) ---
     const handleQuantityChange = (productId, action) => {
         const updatedCart = cart.map(item => {
-            if (item.id === productId) {
+            console.log(item)
+            if (item.product_id === productId) {
                 let newQuantity = item.quantity;
                 if (action === 'increase' && newQuantity < 10) {
                     newQuantity += 1;
                 } else if (action === 'decrease' && newQuantity > 1) {
                     newQuantity -= 1;
                 }
+                console.log(newQuantity)
                 return { ...item, quantity: newQuantity };
             }
             return item;
         });
-        saveCartToLocalStorage(updatedCart);
+        saveCartToAPI(productId, updatedCart);
+        setCart(updatedCart);
+    };
+
+    const removeFromCart = (productId) => {
+        const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
+        if (!confirmDelete) return;
+
+        const updatedCart = cart.filter(item => item.product_id !== productId);
+        deleteCartToAPI(productId);
+        setCart(updatedCart);
     };
 
     const calculateTotal = () => {
-        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+        console.log(cart)
+        return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
     };
 
-    // --- Xử lý thanh toán (handleCheckout) ĐÃ SỬA ĐỂ CHỈ CHUYỂN HƯỚNG ---
     const handleCheckout = () => {
-        console.log("Attempting checkout...");
-        setError("");
-
-        // 1. Kiểm tra trạng thái đăng nhập
         if (!isLoggedIn || !userInfo) {
-            console.log("User not logged in or userInfo missing. Redirecting to login.");
             navigate('/login', { state: { from: '/cart' } });
             return;
         }
 
-        // 2. Kiểm tra giỏ hàng rỗng
         if (cart.length === 0) {
-            console.log("Cart is empty. Aborting checkout.");
             setError("Giỏ hàng của bạn đang trống.");
             return;
         }
 
-        // 3. Chuyển hướng đến trang nhập thông tin địa chỉ (OrderPage)
         navigate('/oder', {
-            state: {
-                cartItems: cart, // Truyền thông tin giỏ hàng
-                userInfo: userInfo // Truyền thông tin người dùng
-            }
+            state: {cartItems: cart, userInfo: userInfo}
         });
     };
 
-    // --- Hiển thị giỏ hàng chi tiết (renderCartItems) giữ nguyên ---
     const renderCartItems = () => {
         if (cart.length === 0) {
             return <Alert variant="info">Giỏ hàng của bạn đang trống.</Alert>;
@@ -168,19 +193,19 @@ const CartPage = () => {
                     <tr key={item.id}>
                         <td>
                             <Image
-                                src={item.images ? `${Constanst.DOMAIN_API}/uploads/${item.images}` : "/path/to/default-image.jpg"}
-                                alt={item.name}
-                                style={{ width: '60px', height: 'auto', objectFit: 'contain' }}
+                                src={item.product?.images ? `${Constanst.DOMAIN_API}/uploads/${item.product.images}` : "/path/to/default-image.jpg"}
+                                alt={item.product?.name}
+                                style={{width: '100px', height: 'auto', objectFit: 'contain'}}
                                 thumbnail
                             />
                         </td>
-                        <td>{item.name}</td>
-                        <td>{item.price?.toLocaleString()} VNĐ</td>
+                        <td>{item.product?.name}</td>
+                        <td>{item.product?.price?.toLocaleString()} VNĐ</td>
                         <td className="text-center">
                             <Button
                                 variant="outline-danger"
                                 size="sm"
-                                onClick={() => handleQuantityChange(item.id, 'decrease')}
+                                onClick={() => handleQuantityChange(item.product_id, 'decrease')}
                                 disabled={item.quantity <= 1}
                                 style={{ marginRight: '5px' }}
                             >
@@ -190,21 +215,22 @@ const CartPage = () => {
                             <Button
                                 variant="outline-primary"
                                 size="sm"
-                                onClick={() => handleQuantityChange(item.id, 'increase')}
+                                onClick={() => handleQuantityChange(item.product_id, 'increase')}
                                 disabled={item.quantity >= 10}
                                 style={{ marginLeft: '5px' }}
                             >
                                 <FaPlus />
                             </Button>
                         </td>
-                        <td>{(item.price * item.quantity).toLocaleString()} VNĐ</td>
+                        <td>{(item.product?.price * item.quantity).toLocaleString()} VNĐ</td>
                         <td>
-                            <Button variant="danger" size="sm" onClick={() => removeFromCart(item.id)}>
+                            <Button variant="danger" size="sm" onClick={() => removeFromCart(item.product_id)}>
                                 <FaTrashAlt />
                             </Button>
                         </td>
                     </tr>
                 ))}
+
                 </tbody>
                 <tfoot>
                 <tr>
@@ -217,7 +243,6 @@ const CartPage = () => {
         );
     };
 
-    // --- return JSX (giữ nguyên) ---
     return (
         <div className="container mt-4 pb-5 min-vh-100 d-flex flex-column">
             <h2 className="mb-4 text-center">Giỏ Hàng Của Bạn</h2>

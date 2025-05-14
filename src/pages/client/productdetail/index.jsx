@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useParams} from "react-router";
 import Constanst from "../../../Constanst"; // Đảm bảo Constanst.DOMAIN_API chứa URL đúng của API của bạn
 
@@ -11,6 +11,7 @@ const ProductDetail = () => {
         fetchProductDetail();
     }, [id]);
 
+    // Hàm lấy chi tiết sản phẩm
     const fetchProductDetail = async () => {
         try {
             const res = await fetch(`${Constanst.DOMAIN_API}/api/products/${id}`);
@@ -24,29 +25,39 @@ const ProductDetail = () => {
         }
     };
 
-    const handleAddToCart = () => {
+    // Hàm thêm sản phẩm vào giỏ hàng
+    const handleAddToCart = useCallback(async () => {
         if (!product) return; // Kiểm tra nếu sản phẩm không tồn tại
 
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const productInCart = cart.find(item => item.id === product.id);
+        try {
+            // Lấy token từ localStorage (hoặc sessionStorage nếu anh sử dụng)
+            const token = localStorage.getItem("authToken");
+            //console.log(token)
+            const res = await fetch(`${Constanst.DOMAIN_API}/api/cart/add`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`  // Gửi token trong header
+                },
+                body: JSON.stringify({
+                    product_id: product.id,
+                    quantity: quantity,
+                })
+            });
 
-        // Kiểm tra nếu sản phẩm đã có trong giỏ, chỉ cần cập nhật số lượng
-        if (productInCart) {
-            const newQuantity = productInCart.quantity + quantity;
-            if (newQuantity <= 10) { // Giới hạn số lượng tối đa là 10
-                productInCart.quantity = newQuantity;
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message); // Thông báo thêm vào giỏ hàng thành công
             } else {
-                alert("Số lượng sản phẩm tối đa là 10");
-                return;
+                alert(data.message); // Thông báo lỗi từ API
             }
-        } else {
-            cart.push({ ...product, quantity });
+        } catch (error) {
+            console.error("Lỗi khi thêm vào giỏ hàng:", error);
+            alert("Có lỗi xảy ra. Vui lòng thử lại.");
         }
+    }, [product, quantity]); // Tối ưu lại hàm thêm vào giỏ hàng
 
-        localStorage.setItem("cart", JSON.stringify(cart));
-        alert("Sản phẩm đã được thêm vào giỏ hàng!");
-    };
-
+    // Hàm thay đổi số lượng sản phẩm
     const handleQuantityChange = (action) => {
         if (action === "increase" && quantity < 10) {
             setQuantity(quantity + 1);
@@ -55,6 +66,7 @@ const ProductDetail = () => {
         }
     };
 
+    // Hàm tính tổng giá
     const calculateTotalPrice = () => {
         return product?.price ? product.price * quantity : 0;
     };
