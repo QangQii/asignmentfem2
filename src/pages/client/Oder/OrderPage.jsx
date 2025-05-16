@@ -47,20 +47,30 @@ const OrderPage = () => {
             return;
         }
 
+        // Lọc sản phẩm có ID hợp lệ
+        const validItems = cartItems.filter(item => item.id && item.quantity > 0);
+
+        if (validItems.length === 0) {
+            setError('Danh sách sản phẩm không hợp lệ. Vui lòng kiểm tra giỏ hàng.');
+            setIsSubmitting(false);
+            return;
+        }
+
         const orderData = {
             user_id: userInfo.id,
-            items: cartItems.map(item => ({
-                productId: item.id,
+            items: validItems.map(item => ({
+                productId: item.product_id, // sửa ở đây
                 quantity: item.quantity,
-                price: item.price
+                price: item.product?.price || item.price
             })),
             name: name,
             phone: phone,
             address: address,
-            payments: parseInt(paymentMethod), // Lấy giá trị phương thức thanh toán
-            payment_status: parseInt(paymentMethod) === 1 ? 0 : 1, // 0 là chưa thanh toán cho COD
-            status: 1 // Chờ xác nhận
+            payments: parseInt(paymentMethod),
+            payment_status: parseInt(paymentMethod) === 1 ? 0 : 1,
+            status: 1
         };
+
 
         console.log("Sending final order data:", orderData);
 
@@ -98,6 +108,7 @@ const OrderPage = () => {
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <div className="container mt-4">

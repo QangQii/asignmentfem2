@@ -101,7 +101,6 @@ const ProductList = () => {
             <th>Ảnh</th>
             <th>Mô tả</th>
             <th>Giá KM</th>
-            <th>View</th>
             <th>Thao tác</th>
           </tr>
           </thead>
@@ -129,13 +128,12 @@ const ProductList = () => {
                     </td>
                     <td>{product.description}</td>
                     <td>{product.discount_price?.toLocaleString() || "Không có"}</td>
-                    <td>{product.view}</td>
                     <td>
                       <Link
                           className="btn btn-success me-2"
                           to={`/admin/product/editproduct/${product.id}`}
                       >
-                        Sửa sản phẩm
+                        Sửa
                       </Link>
                       <button
                           className="btn btn-danger"
