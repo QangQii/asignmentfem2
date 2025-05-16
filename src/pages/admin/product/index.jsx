@@ -1,15 +1,15 @@
-import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Constanst from "../../../Constanst";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // Thêm state cho tìm kiếm
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchCategories();  // Ưu tiên fetch danh mục trước
+      await fetchCategories();
       await fetchProducts();
     };
     fetchData();
@@ -59,39 +59,36 @@ const ProductList = () => {
     }
   };
 
-  // ✅ Sửa để đảm bảo so sánh đúng kiểu dữ liệu
   const getCategoryName = (categoryId) => {
     const category = categories.find(cat => String(cat.id) === String(categoryId));
     return category?.name || "Không có danh mục";
   };
 
-  // Lọc sản phẩm dựa trên từ khóa tìm kiếm
-  const filteredProducts = products.filter(product => {
-    return product.name.toLowerCase().includes(searchQuery.toLowerCase()); // Kiểm tra tên sản phẩm chứa từ khóa
-  });
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-      <div className="container mt-5">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Danh sách sản phẩm</h2>
-          <Link className="btn btn-success" to="/admin/product/addproduct">
-            Thêm sản phẩm
-          </Link>
-        </div>
+    <div className="container mt-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Danh sách sản phẩm</h2>
+        <Link className="btn btn-success" to="/admin/product/addproduct">
+          Thêm sản phẩm
+        </Link>
+      </div>
 
-        {/* Thêm ô tìm kiếm */}
-        <div className="mb-4">
-          <input
-              type="text"
-              className="form-control"
-              placeholder="Tìm kiếm sản phẩm..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)} // Cập nhật searchQuery khi người dùng nhập
-          />
-        </div>
+      <div className="mb-4">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Tìm kiếm sản phẩm..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-        <table className="table table-bordered table-hover text-center">
-          <thead className="table-dark">
+      <table className="table table-bordered table-hover text-center">
+        <thead className="table-dark">
           <tr>
             <th>STT</th>
             <th>Tên sản phẩm</th>
@@ -101,53 +98,55 @@ const ProductList = () => {
             <th>Ảnh</th>
             <th>Mô tả</th>
             <th>Giá KM</th>
+            <th>Số lượng</th>
             <th>Thao tác</th>
           </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
           {filteredProducts.length === 0 ? (
-              <tr>
-                <td colSpan="10">Không có sản phẩm nào</td>
-              </tr>
+            <tr>
+              <td colSpan="10">Không có sản phẩm nào</td>
+            </tr>
           ) : (
-              filteredProducts.map((product, index) => (
-                  <tr key={product.id}>
-                    <td>{index + 1}</td>
-                    <td>{product.name}</td>
-                    <td>{product.price?.toLocaleString() || "Không có"}</td>
-                    <td>{getCategoryName(product.category_id)}</td>
-                    <td>{product.status === 1 ? "Hiển thị" : "Ẩn"}</td>
-                    <td>
-                      <img
-                          src={`${Constanst.DOMAIN_API}/uploads/${product.images}`}
-                          alt="product"
-                          width="60"
-                          height="60"
-                          style={{objectFit: "cover"}}
-                      />
-                    </td>
-                    <td>{product.description}</td>
-                    <td>{product.discount_price?.toLocaleString() || "Không có"}</td>
-                    <td>
-                      <Link
-                          className="btn btn-success me-2"
-                          to={`/admin/product/editproduct/${product.id}`}
-                      >
-                        Sửa
-                      </Link>
-                      <button
-                          className="btn btn-danger"
-                          onClick={() => handleDelete(product.id)}
-                      >
-                        Xóa
-                      </button>
-                    </td>
-                  </tr>
-              ))
+            filteredProducts.map((product, index) => (
+              <tr key={product.id}>
+                <td>{index + 1}</td>
+                <td>{product.name}</td>
+                <td>{product.price?.toLocaleString() || "Không có"}</td>
+                <td>{getCategoryName(product.category_id)}</td>
+                <td>{product.status === 1 ? "Hiển thị" : "Ẩn"}</td>
+                <td>
+                  <img
+                    src={`${Constanst.DOMAIN_API}/uploads/${product.images}`}
+                    alt="product"
+                    width="60"
+                    height="60"
+                    style={{ objectFit: "cover" }}
+                  />
+                </td>
+                <td>{product.description}</td>
+                <td>{product.discount_price?.toLocaleString() || "Không có"}</td>
+                <td>{product.quantity ?? 0}</td>
+                <td>
+                  <Link
+                    className="btn btn-success me-2"
+                    to={`/admin/product/editproduct/${product.id}`}
+                  >
+                    Sửa
+                  </Link>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    Xóa
+                  </button>
+                </td>
+              </tr>
+            ))
           )}
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
