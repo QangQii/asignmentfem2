@@ -71,9 +71,6 @@ const OrderPage = () => {
             status: 1
         };
 
-
-        console.log("Sending final order data:", orderData);
-
         try {
             const res = await fetch(`${Constanst.DOMAIN_API}/api/orders/checkout`, {
                 method: 'POST',
@@ -87,8 +84,21 @@ const OrderPage = () => {
             if (res.ok) {
                 const result = await res.json();
                 console.log("Order placed successfully:", result);
+
+                // Gọi API xóa giỏ hàng sau khi đặt hàng thành công
+                await fetch(`${Constanst.DOMAIN_API}/api/cart/clear`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
                 alert("Đặt hàng thành công!");
+
+                // Xóa localStorage cart
                 localStorage.removeItem('cart');
+
+                // Chuyển trang lịch sử đơn hàng
                 navigate('/order-history');
             } else {
                 let errorMsg = `Có lỗi xảy ra khi đặt hàng (Status: ${res.status}).`;
@@ -108,6 +118,7 @@ const OrderPage = () => {
             setIsSubmitting(false);
         }
     };
+
 
 
     return (
